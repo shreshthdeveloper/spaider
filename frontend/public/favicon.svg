@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- SpAIder's spider, the same drawing as components/SpiderLoader.jsx. No tile behind her: a thin light
+       outline (drawn first, under each part) keeps her visible on light and dark browser tabs. -->
+  <g transform="translate(50 50) scale(1.15) translate(-50 -64)">
+    <line x1="50" y1="0" x2="50" y2="44" stroke="#9fb1ab" stroke-width="3"/>
+    <g fill="none" stroke-linecap="round">
+      <g stroke="#fbf7ef" stroke-width="8.5">
+        <path d="M36 54 Q20 40 10 50"/>
+        <path d="M36 60 Q20 50 10 62"/>
+        <path d="M36 66 Q20 60 10 76"/>
+        <path d="M36 71 Q20 70 10 88"/>
+        <path d="M64 54 Q80 40 90 50"/>
+        <path d="M64 60 Q80 50 90 62"/>
+        <path d="M64 66 Q80 60 90 76"/>
+        <path d="M64 71 Q80 70 90 88"/>
+      </g>
+      <circle cx="50" cy="62" r="21.5" fill="#fbf7ef" stroke="none"/>
+      <g stroke="#24463f" stroke-width="4.5">
+        <path d="M36 54 Q20 40 10 50"/>
+        <path d="M36 60 Q20 50 10 62"/>
+        <path d="M36 66 Q20 60 10 76"/>
+        <path d="M36 71 Q20 70 10 88"/>
+        <path d="M64 54 Q80 40 90 50"/>
+        <path d="M64 60 Q80 50 90 62"/>
+        <path d="M64 66 Q80 60 90 76"/>
+        <path d="M64 71 Q80 70 90 88"/>
+      </g>
+    </g>
+    <circle cx="50" cy="62" r="19" fill="#24463f"/>
+    <ellipse cx="43" cy="51" rx="6" ry="3.5" fill="#fff" opacity="0.22"/>
+    <circle cx="43" cy="60" r="5.5" fill="#fff"/>
+    <circle cx="57" cy="60" r="5.5" fill="#fff"/>
+    <circle cx="44" cy="61" r="2.7" fill="#1f2328"/>
+    <circle cx="58" cy="61" r="2.7" fill="#1f2328"/>
+    <ellipse cx="37" cy="68" rx="3.2" ry="2" fill="#f3a3a3"/>
+    <ellipse cx="63" cy="68" rx="3.2" ry="2" fill="#f3a3a3"/>
+    <path d="M46 69 Q50 73 54 69" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+  </g>
+</svg>

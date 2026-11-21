@@ -1,0 +1,632 @@
+/* The system design whiteboard: setup, the round itself (board + interviewer) and the report. */
+
+/* ---- setup ---- */
+.wb-how {
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.wb-how-step {
+  padding: 14px 16px;
+  display: flex;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.wb-h2 {
+  margin: 0 0 14px;
+  font-size: 16.5px;
+}
+
+.wb-questions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 10px;
+}
+
+button.wb-question {
+  padding: 14px 16px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  line-height: 1.4;
+  text-align: left;
+  border-radius: 12px;
+}
+
+button.wb-question.on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  box-shadow: var(--focus);
+}
+
+button.wb-question.own b {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+}
+
+.wb-own {
+  max-width: 640px;
+  margin-top: 16px;
+  display: grid;
+  gap: 4px;
+}
+
+.wb-own input + .field-label {
+  margin-top: 10px;
+}
+
+.wb-start {
+  margin-top: 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ---- the round: full screen, the board on the left, the interviewer on the right ---- */
+.wb {
+  position: fixed;
+  inset: 0;
+  z-index: 20; /* over the app's sidebar, like the voice call */
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-shade);
+}
+
+.wb-top {
+  padding: 8px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--panel-tint);
+  border-bottom: 1px solid var(--line);
+}
+
+.wb-badge {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 9px;
+}
+
+.wb-title {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.3;
+}
+
+.wb-title b,
+.wb-title span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wb-title span {
+  font-size: 12.5px;
+}
+
+/* "Bella looks in 12s": what the automatic review is doing */
+.wb-watch {
+  padding: 5px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.wb-watch.changed {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+
+.wb-watch.looking {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+  border-color: var(--mid-line);
+}
+
+.wb-watch.looking .icon {
+  animation: rec-blink 1s infinite;
+}
+
+.wb-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+}
+
+.wb-switch input {
+  width: auto;
+  accent-color: var(--accent);
+}
+
+.wb-main {
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 12px;
+}
+
+.wb-board {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.board {
+  position: absolute;
+  inset: 0;
+}
+
+.wb-loading {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+}
+
+/* Bella is looking at the board: a soft light sweeps across it */
+.wb-board.looking {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow);
+}
+
+.wb-board.looking::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  background: linear-gradient(100deg, transparent 38%, rgba(47, 111, 98, 0.12) 50%, transparent 62%);
+  background-size: 250% 100%;
+  pointer-events: none;
+  animation: wb-scan 1.8s linear infinite;
+}
+
+@keyframes wb-scan {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.wb-error {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  z-index: 30;
+  transform: translateX(-50%);
+}
+
+/* ---- the right side: Bella on video, the conversation, the reply bar (InterviewerPanel.jsx) ---- */
+.wb-side {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wb-tile {
+  position: relative;
+  flex: none;
+  aspect-ratio: 16 / 11;
+  overflow: hidden;
+  border: 1px solid var(--line2);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.25s;
+}
+
+/* like a video call: a coloured edge shows who is talking */
+.wb-tile.speaking {
+  box-shadow: 0 0 0 2px var(--accent), 0 8px 24px rgba(47, 111, 98, 0.25);
+}
+
+.wb-tile.listening {
+  box-shadow: 0 0 0 2px #22c55e, 0 8px 24px rgba(34, 197, 94, 0.2);
+}
+
+.wb-tile-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 3;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--glass-strong);
+  border-radius: 999px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  animation: wb-in 0.2s ease-out;
+}
+
+.wb-tile-badge .rec-light {
+  margin-right: 0;
+}
+
+.wb-tile .nameplate {
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  font-size: 12.5px;
+}
+
+.wb-chat {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.wb-log {
+  flex: 1;
+  min-height: 0;
+  padding: 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.wb-msg {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  animation: wb-in 0.25s ease-out;
+}
+
+.wb-msg.you {
+  justify-content: flex-end;
+}
+
+.wb-face {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(145deg, #3d8a7a, var(--accent));
+  border-radius: 50%;
+}
+
+.wb-bubble {
+  max-width: 85%;
+  padding: 9px 12px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  border-top-left-radius: 4px;
+}
+
+.wb-msg.you .wb-bubble {
+  color: #fff;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  border-radius: 14px;
+  border-top-right-radius: 4px;
+}
+
+.wb-typing {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+}
+
+/* the blinking block after Bella's words while she is still speaking */
+.spoken-caret {
+  width: 7px;
+  height: 14px;
+  margin-left: 3px;
+  display: inline-block;
+  vertical-align: -2px;
+  background: var(--accent-fill);
+  border-radius: 2px;
+  animation: rec-blink 0.9s infinite;
+}
+
+.wb-voice-error {
+  margin: 0 12px 8px;
+  font-size: 12.5px;
+  color: var(--bad);
+}
+
+/* one bar: the mic, what you type, and send */
+.wb-composer {
+  margin: 0 10px;
+  padding: 6px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  background: var(--panel2);
+  border: 1px solid var(--line2);
+  border-radius: 18px;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+}
+
+.wb-composer:focus-within {
+  border-color: var(--accent-line);
+  box-shadow: var(--focus);
+}
+
+.wb-composer.listening {
+  background: var(--bad-soft);
+  border-color: var(--bad-line);
+}
+
+.wb-composer textarea,
+.wb-composer textarea:focus {
+  flex: 1;
+  min-height: 36px;
+  max-height: 120px;
+  padding: 8px 4px;
+  resize: none;
+  field-sizing: content; /* grows with the text */
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+
+button.wb-mic,
+button.wb-send {
+  width: 36px;
+  height: 36px;
+  flex: none;
+  padding: 0;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+button.wb-mic {
+  color: var(--accent);
+  background: var(--panel);
+  border-color: var(--accent-line);
+}
+
+.wb-composer.listening button.wb-mic {
+  color: #fff;
+  background: #dc2626;
+  border-color: #dc2626;
+  animation: mic-glow 1.4s infinite;
+}
+
+.wb-listen {
+  flex: 1;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--bad-ink);
+}
+
+.wb-listen.muted {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.wb-meter {
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  background: rgba(220, 38, 38, 0.15);
+  border-radius: 999px;
+}
+
+.wb-meter i {
+  height: 100%;
+  display: block;
+  background: #dc2626;
+  transform-origin: left;
+  transition: transform 0.08s linear;
+}
+
+.wb-hint {
+  padding: 6px 12px 10px;
+  font-size: 11.5px;
+  text-align: center;
+  color: var(--muted);
+}
+
+@keyframes wb-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-board.looking::after,
+  .spoken-caret,
+  .wb-msg {
+    animation: none;
+  }
+}
+
+/* ---- the report ---- */
+.wb-report-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 1100px) {
+  .wb-report-top {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+.wb-snapshot {
+  padding: 10px;
+  display: grid;
+  place-items: center;
+}
+
+.wb-snapshot img {
+  max-width: 100%;
+  max-height: 320px;
+  border-radius: 8px;
+}
+
+.wb-rubric {
+  padding: 4px 20px;
+}
+
+.wb-area {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.wb-area:last-child {
+  border-bottom: 0;
+}
+
+.wb-area-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.wb-points {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-weight: 650;
+}
+
+.level {
+  padding: 1px 9px;
+  font-size: 12px;
+  font-weight: 650;
+  border-radius: 999px;
+}
+
+.level-missing {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+}
+
+.level-basic {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+}
+
+.level-good {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.level-strong {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.wb-comment {
+  margin: 6px 0 0;
+  font-size: 14px;
+}
+
+.wb-evidence {
+  margin-top: 6px;
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--good-ink);
+  background: var(--good-soft);
+  border-radius: 8px;
+}
+
+.wb-evidence .icon {
+  flex: none;
+  margin-top: 3px;
+}
+
+.wb-evidence.unproven {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+}
+
+.wb-transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.wb-report .report-lists {
+  margin-top: 16px;
+}
+
+@media (max-width: 1000px) {
+  .wb-main {
+    overflow-y: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(380px, 1fr) auto;
+  }
+
+  .wb-side {
+    min-height: 560px;
+  }
+
+  .wb-tile {
+    aspect-ratio: 16 / 9;
+  }
+
+  .wb-top .wb-title span,
+  .wb-switch {
+    display: none;
+  }
+
+  .wb-how {
+    grid-template-columns: 1fr;
+  }
+}

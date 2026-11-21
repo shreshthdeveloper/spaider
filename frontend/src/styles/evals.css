@@ -1,0 +1,283 @@
+/* The Evals page (pages/EvalsPage.jsx, components/evals/). Colours are theme tokens only. */
+
+.suite-cards + .card {
+  margin-top: 16px;
+}
+
+/* "← All evals" above the title on a run's page */
+.eval-back {
+  margin-bottom: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.suite-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 16px;
+}
+
+.suite-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.suite-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.suite-icon {
+  width: 38px;
+  height: 38px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 10px;
+}
+
+.suite-title h2 {
+  margin: 0 0 2px;
+}
+
+.suite-title p {
+  margin: 0;
+}
+
+/* one score: the number, the target, and green or amber */
+.metric-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.metric-tiles.wide {
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  margin-bottom: 16px;
+}
+
+.metric-tile {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.metric-tile.good {
+  background: var(--good-soft);
+  border-color: transparent;
+}
+
+.metric-tile.short {
+  background: var(--warn-soft);
+  border-color: transparent;
+}
+
+.metric-label {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--text2);
+}
+
+.metric-value {
+  font-size: 26px;
+  font-weight: 750;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+
+.metric-tile.good .metric-value {
+  color: var(--good-ink);
+}
+
+.metric-tile.short .metric-value {
+  color: var(--warn-ink);
+}
+
+.metric-target {
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.metric-help {
+  margin-top: 4px;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--text2);
+}
+
+.suite-history {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.history-chip {
+  padding: 4px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text2);
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.history-chip:hover {
+  border-color: var(--accent-line);
+}
+
+.history-chip.failed b {
+  color: var(--bad);
+}
+
+.suite-actions {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.eval-steps {
+  margin: 0 0 10px;
+  padding-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text2);
+}
+
+/* one run, case by case */
+.eval-summary {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: var(--panel2);
+  border-radius: 10px;
+}
+
+.eval-filter {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.eval-cases {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.eval-case.mismatch {
+  border-color: var(--bad-line);
+}
+
+.eval-case-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.eval-scores {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.eval-question {
+  margin: 10px 0 6px;
+  font-weight: 600;
+}
+
+.eval-answer {
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  color: var(--text2);
+  background: var(--panel2);
+  border-left: 3px solid var(--line2);
+  border-radius: 0 8px 8px 0;
+}
+
+.eval-points {
+  width: 100%;
+  margin-bottom: 8px;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+
+.eval-points th,
+.eval-points td {
+  padding: 6px 8px;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.eval-points th:nth-child(2),
+.eval-points th:nth-child(3),
+.eval-points td:nth-child(2),
+.eval-points td:nth-child(3) {
+  width: 110px;
+}
+
+/* where the grader and you disagree: red for free credit, amber for a missed point */
+.eval-points tr.too-generous td {
+  background: var(--bad-soft);
+}
+
+.eval-points tr.too-harsh td {
+  background: var(--warn-soft);
+}
+
+.point-mark {
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.point-mark.yes {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.point-mark.no {
+  color: var(--muted);
+  background: var(--panel2);
+}
+
+.mismatch-why {
+  margin-left: 6px;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--text2);
+}
+
+@media (max-width: 720px) {
+  .suite-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

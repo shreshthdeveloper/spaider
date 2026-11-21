@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SpAIder</title>
+    <!-- Pick the colour theme before anything is drawn, so a dark-mode page never flashes cream.
+         The same rule as lib/theme.js: your saved choice, or (on "system") what the computer uses. -->
+    <script>
+      try {
+        var choice = localStorage.getItem('spaider-theme') || 'system'
+        var dark = choice === 'dark' || (choice === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light'
+      } catch (e) {}
+    </script>
+    <style>
+      html, body { background: #f7f4ee; margin: 0 }
+      html[data-theme='dark'], html[data-theme='dark'] body { background: #121614 }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

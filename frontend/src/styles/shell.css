@@ -1,0 +1,505 @@
+/* The app frame: sidebar on the left, page content on the right. */
+.shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  min-height: 100vh;
+  transition: grid-template-columns 0.22s ease;
+}
+
+.sidebar {
+  --muted: #625c54; /* a touch darker on the darker sidebar, so small text stays easy to read */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  height: 100vh;
+  padding: 18px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: var(--bg2);
+  border-right: 1px solid var(--bg2-line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 6px;
+  font-size: 16.5px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.brand-name {
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+/* the "AI" in SpAIder stands out */
+.brand-ai {
+  font-weight: 850;
+  background: linear-gradient(135deg, #2f6f62, #3fae95);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.brand-sub {
+  margin-top: 2px;
+  display: block;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+/* the logo: SpAIder's spider, hanging on her thread from the top of the sidebar (no tile behind her) */
+.logo {
+  width: 46px;
+  height: 46px;
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+
+.logo .spider-art {
+  width: 52px;
+  height: 62px;
+  margin-top: -12px; /* her body sits level with the name */
+  overflow: visible; /* so the thread runs up to the top edge */
+}
+
+/* point at the logo: she bobs on her thread (her legs wiggle too, see base.css) */
+.brand:hover .spider-bob {
+  animation: spider-bob 0.9s ease-in-out infinite alternate;
+}
+
+/* the "New interview" button under the logo */
+.side-cta {
+  justify-content: center;
+  padding: 10px 14px;
+  border-radius: 11px;
+  box-shadow: 0 4px 12px rgba(47, 111, 98, 0.2);
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.nav-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* small grey headings: "Practice", "Insights", "Recent interviews"... */
+.side-title {
+  margin: 0 0 4px;
+  padding: 0 11px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 11px;
+  font-size: 14.5px;
+  color: var(--text2);
+  border-radius: 10px;
+}
+
+.nav-item .icon {
+  color: var(--muted);
+}
+
+a.nav-item:hover {
+  background: rgba(31, 35, 40, 0.05);
+}
+
+.nav-item.on {
+  font-weight: 600;
+  color: var(--text);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.nav-item.on .icon {
+  color: var(--accent);
+}
+
+/* a short accent bar on the left of the open page */
+.nav-item.on::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 18px;
+  background: var(--accent-fill);
+  border-radius: 0 3px 3px 0;
+  transform: translateY(-50%);
+}
+
+/* backend and database status, at the bottom */
+.side-foot {
+  margin-top: auto;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12.5px;
+  color: var(--muted);
+  background: var(--glass);
+  border: 1px solid var(--bg2-line);
+  border-radius: 12px;
+}
+
+.status-line {
+  display: flex;
+  align-items: center;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: var(--line2);
+}
+
+.dot.ok {
+  background: var(--good);
+  box-shadow: 0 0 0 3px var(--good-soft);
+}
+
+.dot.bad {
+  background: var(--bad);
+  box-shadow: 0 0 0 3px var(--bad-soft);
+}
+
+.content {
+  min-width: 0;
+  padding: 28px 34px;
+}
+
+.page {
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.page-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.card {
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+/* ---- collapsing the sidebar ---- */
+/* the round button on the sidebar's edge; its arrow points the way the sidebar will move */
+button.side-toggle {
+  position: absolute;
+  top: 30px;
+  right: -13px;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  justify-content: center;
+  color: var(--text2);
+  background: var(--panel);
+  border: 1px solid var(--bg2-line);
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(31, 35, 40, 0.12);
+}
+
+button.side-toggle:hover:not(:disabled) {
+  color: var(--accent);
+  background: var(--panel);
+}
+
+button.side-toggle .icon {
+  transform: rotate(180deg); /* open: points left, "collapse" */
+  transition: transform 0.22s ease;
+}
+
+.sidebar.collapsed button.side-toggle .icon {
+  transform: none; /* collapsed: points right, "open" */
+}
+
+/* in the narrow rail, the button sits below the spider, so the two don't crowd each other */
+.sidebar.collapsed button.side-toggle {
+  top: 74px;
+}
+
+/* collapsed (bigger screens only): a narrow rail of icons; the names show when you point at them */
+@media (min-width: 861px) {
+  .shell.collapsed {
+    grid-template-columns: 76px minmax(0, 1fr);
+  }
+
+  .sidebar.collapsed {
+    padding: 18px 12px 14px;
+    align-items: center;
+  }
+
+  .sidebar.collapsed .side-label,
+  .sidebar.collapsed .side-title {
+    display: none;
+  }
+
+  .sidebar.collapsed .brand {
+    padding: 4px 0;
+  }
+
+  .sidebar.collapsed .side-cta {
+    width: 44px;
+    height: 44px;
+    padding: 0;
+  }
+
+  .sidebar.collapsed nav {
+    align-items: center;
+  }
+
+  .sidebar.collapsed .nav-item {
+    width: 44px;
+    height: 42px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .sidebar.collapsed .side-foot {
+    padding: 10px;
+    align-items: center;
+  }
+
+  .sidebar.collapsed .dot {
+    margin-right: 0;
+  }
+}
+
+/* Phones and small windows: the sidebar becomes a compact top bar. */
+@media (max-width: 860px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr); /* lets the column shrink; the menu scrolls instead */
+  }
+
+  .sidebar {
+    min-width: 0;
+    position: static;
+    height: auto;
+    padding: 12px 14px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .sidebar nav {
+    flex-direction: row;
+    gap: 2px;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .nav-group {
+    display: contents; /* all menu items in one scrolling row */
+  }
+
+  .nav-item {
+    white-space: nowrap;
+  }
+
+  .nav-item.on::before {
+    display: none;
+  }
+
+  .brand-sub,
+  .side-cta,
+  .side-title,
+  .side-toggle,
+  .side-foot {
+    display: none;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}
+
+/* ---- the splash screen after each refresh (components/SplashScreen.jsx) ---- */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100; /* above everything, the voice call and the whiteboard too */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 40%, var(--panel-tint) 0%, var(--bg) 70%);
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.splash.leaving {
+  opacity: 0;
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+.splash .spider-loader svg {
+  width: 120px;
+  height: 144px;
+}
+
+.splash-name {
+  margin-top: 6px;
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  animation: splash-in 0.5s ease-out 0.15s backwards;
+}
+
+.splash-tagline {
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--muted);
+  animation: splash-in 0.5s ease-out 0.35s backwards;
+}
+
+@keyframes splash-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---- the sidebar's search button (opens the command palette) and theme button ---- */
+button.side-search {
+  width: 100%;
+  padding: 8px 10px;
+  gap: 8px;
+  color: var(--muted);
+  background: var(--glass);
+  border: 1px solid var(--bg2-line);
+  border-radius: 10px;
+}
+
+button.side-search:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--panel);
+}
+
+button.side-search .side-label:not(.kbd) {
+  flex: 1;
+  text-align: left;
+}
+
+button.theme-toggle {
+  margin-bottom: 4px;
+  padding: 4px 6px;
+  gap: 8px;
+  justify-content: flex-start;
+  font-size: 12.5px;
+  color: var(--text2);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+}
+
+button.theme-toggle:hover:not(:disabled) {
+  background: var(--panel);
+}
+
+@media (min-width: 861px) {
+  .sidebar.collapsed button.side-search {
+    width: 44px;
+    height: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .sidebar.collapsed button.theme-toggle {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 860px) {
+  button.side-search {
+    display: none;
+  }
+}
+
+/* ---- page transitions (lib/router.js): the page content fades and rises a little ----
+   The name is only set while switching: a named element is its own layer, and full-screen views
+   (the call, the whiteboard) must be free to cover the sidebar the rest of the time. */
+html.page-switching .content {
+  view-transition-name: page;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-old(page) {
+  animation: page-out 0.14s ease-in both;
+}
+
+::view-transition-new(page) {
+  animation: page-in 0.26s ease-out both;
+}
+
+@keyframes page-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+/* switching the theme (lib/theme.js): the new colours spread out in a circle from the button */
+html.theme-switching::view-transition-new(root) {
+  animation: theme-reveal 0.55s ease-in-out;
+}
+
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--reveal-x) var(--reveal-y));
+  }
+  to {
+    clip-path: circle(150vmax at var(--reveal-x) var(--reveal-y));
+  }
+}

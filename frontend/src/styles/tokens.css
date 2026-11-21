@@ -1,0 +1,100 @@
+/* Design tokens: every colour, radius and shadow lives here.
+   Change the theme by changing these values only. Light (warm and calm) and dark (deep green).
+   The theme is chosen in lib/theme.js, which sets <html data-theme="light" | "dark">. */
+:root {
+  color-scheme: light;
+  --bg: #f7f4ee;          /* cream page */
+  --bg2: #ebe5d9;         /* sidebar: a little darker than the page, so the two don't blend */
+  --bg2-line: #ddd4c5;    /* the sidebar's edge */
+  --panel: #ffffff;       /* cards */
+  --panel2: #f6f3ed;      /* inputs, subtle fills */
+  --panel-tint: #fbf9f5;  /* a panel a shade off white */
+  --panel-shade: #efebe4; /* a panel a shade darker */
+  --glass: rgba(255, 255, 255, 0.5);         /* see-through boxes on the sidebar */
+  --glass-strong: rgba(255, 255, 255, 0.92); /* labels over a drawing or a video */
+  --hover: #f3efe7;
+  --line: #e7e1d7;
+  --line2: #d9d1c4;
+  --text: #1f2328;
+  --text2: #3d4148;
+  --muted: #6f6a62;
+  --accent: #2f6f62;      /* muted deep teal: links and accents */
+  --accent-fill: #2f6f62; /* the teal behind white text (buttons) */
+  --accent-hover: #285f54;
+  --accent-soft: #e6f0ec;
+  --accent-line: #b9d3ca;
+  --on-accent: #ffffff;   /* text on --accent-fill */
+  --good: #15803d;
+  --good-soft: #e7f5ec;
+  --good-ink: #166534;    /* text on --good-soft */
+  --warn: #b45309;
+  --warn-soft: #fdf3e2;
+  --warn-ink: #854d0e;    /* text on --mid-soft and --warn-soft */
+  --mid-soft: #fbf3d9;    /* yellow fill: "middling" scores, notes */
+  --mid-line: #f1dca6;
+  --bad: #b91c1c;
+  --bad-soft: #fdebeb;
+  --bad-ink: #991b1b;     /* text on --bad-soft */
+  --bad-line: #f3c4c4;
+  --spider: #24463f;      /* SpAIder's spider, when nothing else colours her */
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(31, 35, 40, 0.04), 0 6px 20px rgba(31, 35, 40, 0.05);
+  --focus: 0 0 0 3px rgba(47, 111, 98, 0.14);
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #121614;
+  --bg2: #0e1110;
+  --bg2-line: #232a27;
+  --panel: #1a1f1d;
+  --panel2: #212725;
+  --panel-tint: #1e2422;
+  --panel-shade: #262d2a;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(26, 31, 29, 0.92);
+  --hover: #252c29;
+  --line: #2a322f;
+  --line2: #37413d;
+  --text: #e6eae8;
+  --text2: #c3cac6;
+  --muted: #8e9893;
+  --accent: #63bfa9;
+  --accent-fill: #2b8270;
+  --accent-hover: #34947f;
+  --accent-soft: #1b322c;
+  --accent-line: #2f5a50;
+  --on-accent: #ffffff;
+  --good: #4ade80;
+  --good-soft: #15291d;
+  --good-ink: #86efac;
+  --warn: #f5a524;
+  --warn-soft: #2e2414;
+  --warn-ink: #fcd34d;
+  --mid-soft: #31290f;
+  --mid-line: #5a4a1f;
+  --bad: #f87171;
+  --bad-soft: #301a1a;
+  --bad-ink: #fca5a5;
+  --bad-line: #5e2d2d;
+  --spider: #7fb8a8; /* a lighter spider, so she shows on the dark page */
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 6px 20px rgba(0, 0, 0, 0.25);
+  --focus: 0 0 0 3px rgba(99, 191, 169, 0.25);
+}
+
+/* a few colours set inside components, made lighter for the dark page */
+:root[data-theme='dark'] .sidebar {
+  --muted: #929c97;
+}
+
+:root[data-theme='dark'] .brand-ai {
+  background: linear-gradient(135deg, #63bfa9, #9ee0cd);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+:root[data-theme='dark'] input::placeholder,
+:root[data-theme='dark'] textarea::placeholder {
+  color: #69736e;
+}

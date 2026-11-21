@@ -1,0 +1,11 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+*.db
+chroma/
+uploads/
+node_modules/
+dist/
+.DS_Store
+tts_cache/

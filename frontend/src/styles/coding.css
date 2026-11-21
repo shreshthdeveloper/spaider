@@ -1,0 +1,388 @@
+/* The coding round: setup, the round itself (problem | editor + tests | Bella) and the report.
+   The round reuses the whiteboard's frame (.wb, .wb-top) and Bella's panel (.wb-side). */
+
+/* ---- setup ---- */
+.code-modes {
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.code-pick-head {
+  margin-bottom: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.code-pick-head .wb-h2 {
+  margin: 0;
+}
+
+.code-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.code-tag {
+  padding: 1px 8px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text2);
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.code-tag.easy {
+  color: var(--good-ink);
+  text-transform: capitalize;
+  background: var(--good-soft);
+  border-color: #bfe3cc;
+}
+
+.code-tag.medium {
+  color: var(--warn-ink);
+  text-transform: capitalize;
+  background: var(--mid-soft);
+  border-color: var(--mid-line);
+}
+
+/* ---- the round ---- */
+.code-mode {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.code-mode.interview {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.code-mode.practice {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+}
+
+.code-main {
+  flex: 1;
+  min-height: 0;
+  padding: 12px;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr) 360px;
+  gap: 12px;
+}
+
+.code-problem {
+  min-height: 0;
+  padding: 16px 18px;
+  overflow-y: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.code-problem-head h2 {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.code-statement {
+  margin: 12px 0 14px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.code-example {
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: var(--panel2);
+  border-radius: 10px;
+}
+
+.code-example code,
+.code-signature {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.code-example-title {
+  margin: 14px 0 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.code-example .code-example-title {
+  margin: 0;
+}
+
+.code-signature {
+  padding: 8px 10px;
+  display: block;
+  color: #e6f2ee;
+  background: #1f2a28;
+  border-radius: 8px;
+}
+
+.code-test-note {
+  margin-top: 14px;
+  line-height: 1.5;
+}
+
+.code-work {
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Bella's notes as chips above the editor: click one to jump to its line */
+.code-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+button.code-note {
+  padding: 5px 10px;
+  gap: 8px;
+  font-size: 12.5px;
+  color: #5c3d00;
+  background: #fff3bf;
+  border-color: #f0c36d;
+  border-radius: 10px;
+  animation: wb-in 0.25s ease-out;
+}
+
+button.code-note:hover:not(:disabled) {
+  background: #ffe9a3;
+}
+
+button.code-note span {
+  font-weight: 700;
+}
+
+.code-editor-box {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+/* Bella is reading the code */
+.code-work.looking .code-editor-box {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow);
+}
+
+.code-editor {
+  height: 100%;
+}
+
+.code-editor .cm-editor {
+  height: 100%;
+  font-size: 14px;
+}
+
+.code-editor .cm-editor.cm-focused {
+  outline: none;
+}
+
+.code-editor .cm-scroller {
+  font-family: var(--mono);
+  line-height: 1.6;
+}
+
+.code-editor .cm-gutters {
+  background: var(--panel2);
+  border-right: 1px solid var(--line);
+}
+
+/* the lines Bella has a note on: highlighted in yellow, the note shows on hover */
+.code-editor .cm-lintRange-info {
+  background-image: none;
+  background-color: rgba(255, 213, 79, 0.28);
+  border-bottom: 2px solid #f0a500;
+}
+
+.code-editor .cm-diagnostic-info {
+  border-left-color: #f0a500;
+}
+
+.code-tests {
+  flex: none;
+  max-height: 34%;
+  min-height: 110px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+}
+
+.code-tests-head {
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.code-tests-score {
+  margin-left: auto;
+  padding: 2px 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+  border-radius: 999px;
+}
+
+.code-tests-score.all {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.code-tests-empty {
+  margin: 12px 14px;
+}
+
+.code-tests-list {
+  padding: 6px 8px;
+  overflow-y: auto;
+}
+
+.code-test {
+  padding: 6px 8px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 8px;
+  font-size: 13px;
+  animation: wb-in 0.2s ease-out;
+}
+
+.code-test + .code-test {
+  border-top: 1px solid var(--line);
+}
+
+.code-test-icon {
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+}
+
+.code-test.ok .code-test-icon {
+  color: #fff;
+  background: var(--good);
+}
+
+.code-test.failed .code-test-icon {
+  color: #fff;
+  background: var(--bad);
+}
+
+.code-test-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.code-hidden {
+  margin-left: 6px;
+  padding: 0 6px;
+  font-size: 11px;
+  color: var(--muted);
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.code-test-ms {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.code-test-why,
+.code-test-printed {
+  grid-column: 2 / -1;
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.code-test-why {
+  color: var(--bad-ink);
+}
+
+.code-test-printed {
+  padding: 4px 8px;
+  color: var(--text2);
+  background: var(--panel2);
+  border-radius: 6px;
+}
+
+/* ---- the report ---- */
+.code-snapshot {
+  margin: 0;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-family: var(--mono);
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre;
+  color: #e6f2ee;
+  background: #1f2a28;
+  border-color: #1f2a28;
+}
+
+@media (max-width: 1250px) {
+  .code-main {
+    grid-template-columns: 260px minmax(0, 1fr) 320px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .code-main {
+    overflow-y: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(420px, 1fr) auto;
+  }
+
+  .code-problem {
+    max-height: 240px;
+  }
+
+  .code-modes {
+    grid-template-columns: 1fr;
+  }
+}

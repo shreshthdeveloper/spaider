@@ -1,0 +1,1058 @@
+/* Base elements and small helpers used on every page. */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 15px/1.55 -apple-system, BlinkMacSystemFont, 'Segoe UI', Inter, Roboto, 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+h1 {
+  margin: 0 0 4px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+h2 {
+  margin: 0 0 12px;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+p {
+  margin: 6px 0;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.88em;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+
+button {
+  font: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+button:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+button.primary {
+  color: #fff;
+  font-weight: 600;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+button.small {
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+input,
+textarea {
+  font: inherit;
+  width: 100%;
+  padding: 9px 11px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 10px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #a39d93;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.kbd {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  padding: 0 5px;
+  color: var(--text2);
+  background: var(--panel2);
+  border: 1px solid var(--line2);
+  border-radius: 5px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  color: var(--text2);
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 999px;
+}
+
+.token-chip {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+
+.eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+@keyframes blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* Markdown inside AI replies */
+.md p {
+  margin: 8px 0;
+}
+
+.md h4 {
+  margin: 14px 0 6px;
+}
+
+.md ul,
+.md ol {
+  margin: 6px 0;
+  padding-left: 20px;
+}
+
+.md > :first-child {
+  margin-top: 0;
+}
+
+.md > :last-child {
+  margin-bottom: 0;
+}
+
+.md-code {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  padding: 10px;
+  overflow: auto;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.md-table {
+  margin: 8px 0;
+  font-size: 13px;
+  border-collapse: collapse;
+  background: var(--panel);
+}
+
+.md-table td,
+.md-table th {
+  padding: 5px 8px;
+  text-align: left;
+  border: 1px solid var(--line);
+}
+
+/* ---- shared pieces used by more than one page ---- */
+.small {
+  font-size: 13px;
+}
+
+.field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+button.big {
+  padding: 12px 22px;
+  font-size: 15.5px;
+  border-radius: 12px;
+}
+
+button.danger-outline {
+  color: var(--bad);
+  border-color: var(--bad-line);
+}
+
+button.danger-outline:hover:not(:disabled) {
+  background: var(--bad-soft);
+}
+
+/* A link that looks like a button */
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid var(--line2);
+}
+
+.button-link.primary {
+  color: #fff;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+}
+
+.button-link.primary:hover {
+  background: var(--accent-hover);
+}
+
+.spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  vertical-align: -3px;
+  border: 2.5px solid var(--line);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+}
+
+.spinner.small {
+  width: 14px;
+  height: 14px;
+  border-width: 2px;
+}
+
+button.primary .spinner {
+  border-color: rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-btn {
+  padding: 5px 12px;
+  font-size: 13px;
+  color: var(--text2);
+  border-radius: 999px;
+}
+
+.chip-btn.on {
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+
+/* Segmented control: a row of buttons where one is selected */
+.seg {
+  display: inline-flex;
+  gap: 3px;
+  padding: 3px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 11px;
+}
+
+.seg button {
+  min-width: 44px;
+  justify-content: center;
+  padding: 6px 13px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+}
+
+.seg button:hover:not(:disabled) {
+  color: var(--text);
+  background: transparent;
+}
+
+.seg button.on {
+  font-weight: 600;
+  color: var(--text);
+  background: var(--panel);
+  box-shadow: 0 1px 3px rgba(31, 35, 40, 0.12);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  border-radius: 999px;
+}
+
+.score-good {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.score-mid {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+}
+
+.score-bad {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+}
+
+.score-none,
+.badge-progress {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.section-title {
+  margin: 26px 0 10px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+.inline-error {
+  margin-top: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+  border: 1px solid var(--bad-line);
+  border-radius: 12px;
+}
+
+.inline-error button {
+  margin-left: auto;
+  flex: none;
+}
+
+/* ---- the "Are you sure?" box (components/ConfirmDialog.jsx) ---- */
+.confirm-dialog {
+  width: min(420px, calc(100vw - 32px));
+  padding: 0;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(31, 35, 40, 0.22);
+}
+
+.confirm-dialog[open] {
+  animation: dialog-in 0.16s ease-out;
+}
+
+.confirm-dialog::backdrop {
+  background: rgba(24, 30, 28, 0.4);
+  backdrop-filter: blur(3px);
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
+  }
+}
+
+.confirm-box {
+  padding: 24px;
+}
+
+.confirm-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 12px;
+}
+
+.confirm-icon.danger {
+  color: var(--bad);
+  background: var(--bad-soft);
+}
+
+.confirm-box h2 {
+  margin: 16px 0 6px;
+  font-size: 18px;
+}
+
+.confirm-box p {
+  margin: 0;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+button.danger-solid {
+  font-weight: 600;
+  color: #fff;
+  background: var(--bad);
+  border-color: var(--bad);
+}
+
+button.danger-solid:hover:not(:disabled) {
+  background: var(--bad-ink);
+}
+
+/* ---- small pieces shared by several pages ---- */
+.tab-count {
+  min-width: 20px;
+  padding: 0 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+}
+
+.search-box {
+  width: 220px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.search-box:focus-within {
+  border-color: var(--accent-line);
+  box-shadow: var(--focus);
+}
+
+.search-box input,
+.search-box input:focus {
+  padding: 7px 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  outline: none;
+}
+
+/* keyboard focus: a ring in the app's colour instead of the browser's blue one */
+a:focus-visible,
+button:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---- SpiderLoader and SpiderArt (components/SpiderLoader.jsx): SpAIder's cute spider ----
+   The drawing's colours are shared. The movement (bobbing, swaying, wiggling legs) is only for the loader;
+   the logo stays still, blinks now and then, and wiggles its legs when you point at it. */
+.spider-loader {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+.spider-loader svg {
+  width: 64px;
+  height: 77px;
+  overflow: hidden;
+}
+
+/* small: the spider sits beside the text, for loading lines inside a card */
+.spider-loader.small {
+  padding: 4px 0;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.spider-loader.small svg {
+  width: 34px;
+  height: 41px;
+}
+
+.spider-loader.large svg {
+  width: 96px;
+  height: 115px;
+}
+
+.spider-loader.large {
+  font-size: 15px;
+}
+
+/* loading a whole page: the spider waits in the middle of the screen */
+.page > .spider-loader {
+  min-height: 60vh;
+  justify-content: center;
+}
+
+.spider-thread {
+  stroke: #a9bab5;
+  stroke-width: 1.4;
+}
+
+/* --spider-color: her colour. Your pet spider sets it from her mood (styles/stats.css). */
+.spider-body {
+  fill: var(--spider-color, var(--spider));
+}
+
+.spider-shine {
+  fill: #fff;
+  opacity: 0.22;
+}
+
+.spider-legs path {
+  fill: none;
+  stroke: var(--spider-color, var(--spider));
+  stroke-width: 3.6;
+  stroke-linecap: round;
+  transform-box: fill-box;
+}
+
+.spider-loader .spider-legs path,
+.spider-alive .spider-legs path,
+.brand:hover .spider-legs path {
+  animation: spider-leg 0.32s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * 0.08s);
+}
+
+/* each leg turns around the end where it joins the body */
+.spider-legs.left path {
+  transform-origin: right center;
+}
+
+.spider-legs.right path {
+  transform-origin: left center;
+  animation-direction: alternate-reverse;
+}
+
+.spider-pupil {
+  fill: #1f2328;
+}
+
+.spider-eyes {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: spider-blink 3.2s infinite;
+}
+
+.spider-cheek {
+  fill: #f3a3a3;
+  opacity: 0.85;
+}
+
+/* mood faces (SpiderArt's mood prop): heavy eyelids in her own colour, and dark angry brows */
+.spider-lids path {
+  fill: var(--spider-color, var(--spider));
+}
+
+.spider-brows path {
+  fill: none;
+  stroke: #1f2328;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+/* elder (the judge): white hair and brows, a moustache, and round glasses */
+.spider-hair,
+.spider-old-brows,
+.spider-moustache {
+  fill: none;
+  stroke: #f3f0e9;
+  stroke-linecap: round;
+}
+
+.spider-hair {
+  stroke-width: 1.6;
+}
+
+.spider-old-brows {
+  stroke-width: 2.6;
+}
+
+.spider-moustache {
+  stroke-width: 2.2;
+}
+
+.spider-glasses {
+  fill: rgba(255, 255, 255, 0.12);
+  stroke: #1f2328;
+  stroke-width: 1.4;
+}
+
+.spider-smile {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+/* up and down on the thread... */
+.spider-loader .spider-bob,
+.spider-alive .spider-bob {
+  animation: spider-bob 1.1s ease-in-out infinite alternate;
+}
+
+/* ...while the thread sways a little from the top */
+.spider-sway {
+  transform-box: view-box;
+  transform-origin: 50px 0;
+}
+
+.spider-loader .spider-sway,
+.spider-alive .spider-sway {
+  animation: spider-sway 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes spider-bob {
+  from {
+    transform: translateY(-10px);
+  }
+  to {
+    transform: translateY(14px);
+  }
+}
+
+@keyframes spider-sway {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes spider-leg {
+  from {
+    transform: rotate(-9deg);
+  }
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+@keyframes spider-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spider-loader *,
+  .spider-art * {
+    animation: none !important;
+  }
+}
+
+/* ---- Modal (components/Modal.jsx): a pop-up window over the page ---- */
+.modal {
+  width: min(920px, calc(100vw - 32px));
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 24px 64px rgba(31, 35, 40, 0.24);
+}
+
+.modal[open] {
+  display: flex;
+  animation: dialog-in 0.16s ease-out;
+}
+
+.modal::backdrop {
+  background: rgba(24, 30, 28, 0.4);
+  backdrop-filter: blur(3px);
+}
+
+/* side: a panel along the right edge, full height (the question bank's inspector) */
+.modal.side {
+  width: min(540px, 100vw);
+  height: 100vh;
+  max-height: none;
+  margin: 0 0 0 auto;
+  border-radius: 18px 0 0 18px;
+}
+
+.modal.side[open] {
+  animation: side-in 0.2s ease-out;
+}
+
+@keyframes side-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+}
+
+.modal-box {
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-head {
+  padding: 16px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.modal-title h2 {
+  margin: 0 0 2px;
+  font-size: 18px;
+}
+
+button.modal-close {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  padding: 0;
+  justify-content: center;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+}
+
+button.modal-close:hover:not(:disabled) {
+  color: var(--text);
+  background: var(--hover);
+}
+
+.modal-body {
+  min-height: 0;
+  padding: 18px 20px 20px;
+  overflow-y: auto;
+}
+
+/* SpAIder's face on its chat messages and the interviewer badge: the spider in the round tile.
+   It is sized from the tile, so it fits any tile size. */
+.spider-face {
+  overflow: hidden;
+  padding: 0;
+}
+
+.spider-face .spider-art {
+  width: 125%;
+  aspect-ratio: 100 / 120;
+  margin-top: -22%; /* her body in the middle of the tile; the thread runs off the top */
+}
+
+/* the empty practice chat: she hangs above the welcome text, bobbing gently (.spider-alive) */
+.welcome-spider {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 10px;
+  display: grid;
+  place-items: center;
+}
+
+.welcome-spider .spider-art {
+  width: 64px;
+  height: 77px;
+  margin-top: -14px;
+  overflow: visible;
+}
+
+/* ---- the command palette (components/CommandPalette.jsx): ⌘K to jump anywhere ---- */
+.palette {
+  width: min(620px, calc(100vw - 32px));
+  max-height: min(560px, calc(100vh - 120px));
+  margin: 12vh auto auto;
+  padding: 0;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+}
+
+.palette[open] {
+  display: flex;
+  animation: dialog-in 0.14s ease-out;
+}
+
+.palette::backdrop {
+  background: rgba(18, 22, 20, 0.45);
+  backdrop-filter: blur(3px);
+}
+
+.palette-box {
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.palette-search {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+}
+
+.palette-search input {
+  flex: 1;
+  padding: 6px 0;
+  font-size: 16px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.palette-search input:focus {
+  box-shadow: none;
+}
+
+.palette-list {
+  flex: 1;
+  min-height: 0;
+  padding: 6px;
+  overflow-y: auto;
+}
+
+.palette-group {
+  padding: 10px 10px 4px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+button.palette-item {
+  width: 100%;
+  padding: 8px 10px;
+  gap: 10px;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+}
+
+button.palette-item.on {
+  background: var(--accent-soft);
+}
+
+.palette-icon {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--panel2);
+  border-radius: 8px;
+}
+
+.palette-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.palette-hint {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.palette-empty {
+  padding: 16px;
+}
+
+.palette-foot {
+  padding: 8px 16px;
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+
+/* ---- exporting a report (components/ExportReport.jsx) ---- */
+.export-error {
+  font-size: 12.5px;
+  color: var(--bad);
+}
+
+/* the SpAIder line at the bottom: hidden on screen, shown in the image and the PDF */
+.export-brand {
+  display: none;
+  margin-top: 24px;
+  padding-top: 14px;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+
+.exporting .export-brand {
+  display: flex;
+}
+
+.export-brand b {
+  color: var(--text);
+}
+
+.export-brand-logo {
+  width: 30px;
+  height: 30px;
+  overflow: hidden;
+}
+
+.export-brand-logo .spider-art {
+  width: 30px;
+  height: 36px;
+  margin-top: -6px;
+}
+
+.export-brand-date {
+  margin-left: auto;
+}
+
+/* printing a report: only the report, without buttons, cards not split across pages */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-target,
+  .print-target * {
+    visibility: visible;
+  }
+
+  .print-target {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+  }
+
+  .print-target .no-export {
+    display: none !important;
+  }
+
+  .print-target .export-brand {
+    display: flex;
+  }
+
+  /* gradient text needs backgrounds, which printing leaves out: plain teal instead */
+  .print-target .brand-ai {
+    background: none;
+    color: var(--accent);
+  }
+
+  .print-target .card {
+    box-shadow: none;
+  }
+
+  /* small blocks stay whole; big cards may run onto the next page (else a tall card leaves a blank page) */
+  .print-target .report-hero,
+  .print-target .wb-area,
+  .print-target .report-lists .card,
+  .print-target .result-card,
+  .print-target .wb-msg {
+    break-inside: avoid;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "about": "16 draft questions for a Senior Backend Engineer. 6 are planted bad ones the judge should drop: 2 repeats, 1 too easy, 1 vague, 1 with wrong key points, 1 with three questions in one.",
+  "inputs": {
+    "company": "Acme",
+    "position": "Senior Backend Engineer",
+    "interview_type": "Technical",
+    "level": "Senior",
+    "topics": "Kafka, Python, system design",
+    "jd": "We build event-driven payment services in Python with Kafka and PostgreSQL. You will own APIs end to end, from design to on-call.",
+    "resume": "",
+    "documents": []
+  },
+  "briefs": {
+    "technical": "Cover Kafka ordering and scaling, debugging production latency, queues vs direct calls, and safe retries for payment APIs.",
+    "python": "Cover generators, asyncio vs threads, memory leaks in long-running workers, and classic Python pitfalls."
+  },
+  "questions": {
+    "technical": [
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "How would you keep one customer's payment events in order in Kafka while still scaling consumers?",
+        "key_points": ["use the customer id as the message key", "Kafka only orders messages within a partition", "more partitions allow more consumers in parallel"],
+        "difficulty": "hard"
+      },
+      {
+        "kind": "repeat",
+        "expect": "drop",
+        "question": "How do you make sure events for the same customer stay in order in Kafka when you add more consumers?",
+        "key_points": ["key by customer id", "ordering is per partition", "add partitions to scale"],
+        "difficulty": "hard"
+      },
+      {
+        "kind": "too_easy",
+        "expect": "drop",
+        "question": "What is Kafka?",
+        "key_points": ["a message broker"],
+        "difficulty": "easy"
+      },
+      {
+        "kind": "vague",
+        "expect": "drop",
+        "question": "Tell me about databases.",
+        "key_points": ["they store data"],
+        "difficulty": "easy"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "Your API's p99 latency doubled after a deploy. How do you find the cause?",
+        "key_points": ["compare metrics before and after the deploy", "use traces to find the slow span", "check slow database queries and their plans", "roll back if users are hurting"],
+        "difficulty": "hard"
+      },
+      {
+        "kind": "wrong_points",
+        "expect": "drop",
+        "question": "How does a database index speed up reads?",
+        "key_points": ["it stores the whole table twice", "it makes writes faster", "it removes the need for a primary key"],
+        "difficulty": "medium"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "When would you put a queue between two services instead of a direct HTTP call?",
+        "key_points": ["it decouples the services", "it absorbs traffic spikes", "messages survive a consumer crash and can be retried", "the work can happen asynchronously"],
+        "difficulty": "medium"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "How would you make a payment API safe for clients to retry?",
+        "key_points": ["the client sends an idempotency key", "the server stores the result for each key", "a repeat request returns the stored result instead of charging again"],
+        "difficulty": "hard"
+      }
+    ],
+    "python": [
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "How does a Python generator differ from returning a list, and when does that difference matter?",
+        "key_points": ["a generator yields values lazily", "it uses far less memory for large data", "it can only be iterated once"],
+        "difficulty": "medium"
+      },
+      {
+        "kind": "two_in_one",
+        "expect": "drop",
+        "question": "What is the GIL, how do decorators work, and how is memory managed in Python?",
+        "key_points": ["the GIL lets one thread run Python code at a time", "a decorator wraps a function", "reference counting plus a garbage collector"],
+        "difficulty": "medium"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "When would you use asyncio instead of threads in a Python service?",
+        "key_points": ["asyncio suits many waiting I/O tasks", "one thread with an event loop, so little overhead", "CPU-heavy work still needs processes"],
+        "difficulty": "hard"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "How would you find a memory leak in a long-running Python worker?",
+        "key_points": ["watch memory over time to confirm the leak", "use tracemalloc to compare snapshots", "look for growing caches or global lists"],
+        "difficulty": "hard"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "What goes wrong when you use a mutable default argument, and how do you avoid it?",
+        "key_points": ["the default is created once and shared between calls", "changes leak into later calls", "use None as the default and create the object inside"],
+        "difficulty": "medium"
+      },
+      {
+        "kind": "repeat",
+        "expect": "drop",
+        "question": "Why would you use yield instead of building and returning a list?",
+        "key_points": ["lazy values", "less memory", "single pass"],
+        "difficulty": "medium"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "How do you stop two Python modules from importing each other in a cycle?",
+        "key_points": ["move the shared code into a third module", "import inside the function that needs it", "rethink which module owns what"],
+        "difficulty": "medium"
+      },
+      {
+        "kind": "good",
+        "expect": "keep",
+        "question": "How would you test code that calls an external payment provider?",
+        "key_points": ["mock or fake the provider in unit tests", "use the provider's sandbox for integration tests", "test timeouts and error responses too"],
+        "difficulty": "medium"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1285 @@
+/* The question bank (pages/QuestionBankPage.jsx and components/bank/). It reuses the interview setup's
+   layout (.setup-layout, .setup-card, .summary-card); this file adds the panel and its questions. */
+
+/* ---- an agent's face: the spider in its colour, in a round tile ---- */
+.agent-avatar {
+  flex: none;
+  display: grid;
+  place-items: start center;
+  overflow: hidden;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--spider-color) 13%, white);
+}
+
+.agent-avatar.medium {
+  width: 44px;
+  height: 44px;
+}
+
+.agent-avatar.small {
+  width: 30px;
+  height: 30px;
+}
+
+.agent-avatar .spider-art {
+  width: 125%;
+  aspect-ratio: 100 / 120;
+  margin-top: -22%;
+}
+
+.agent-avatar .spider-thread {
+  display: none;
+}
+
+/* thinking: legs moving and a small bob (smaller than the loader's, to stay inside the tile) */
+.agent-avatar.spider-alive .spider-bob {
+  animation: agent-bob 0.8s ease-in-out infinite alternate;
+}
+
+.agent-avatar.spider-alive .spider-sway {
+  animation: none;
+}
+
+@keyframes agent-bob {
+  from {
+    transform: translateY(-2px);
+  }
+  to {
+    transform: translateY(3px);
+  }
+}
+
+/* ---- the setup form ---- */
+.bank-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.bank-fields label,
+.bank-topics {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bank-choice {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.text-or-pdf {
+  margin-bottom: 14px;
+}
+
+.text-or-pdf-head {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.picked-file {
+  padding: 8px 8px 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 10px;
+}
+
+.picked-file > span:first-of-type {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.agent-picks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+button.agent-pick {
+  padding: 12px;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  border-radius: 12px;
+}
+
+button.agent-pick:hover:not(:disabled) {
+  border-color: var(--accent-line);
+}
+
+button.agent-pick.on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+button.agent-pick.on .mode-check {
+  color: #fff;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+}
+
+.agent-pick-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  line-height: 1.35;
+}
+
+.agent-pick-name {
+  font-weight: 700;
+}
+
+.agent-pick-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--accent);
+}
+
+/* the summary: lead -> agents -> judge, as little faces */
+.panel-row {
+  margin: 12px 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+}
+
+.panel-row-agents {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 3px;
+}
+
+.bank-hint {
+  margin: 8px 0 0;
+  text-align: center;
+}
+
+/* ---- a bank: its head, and the panel at work ---- */
+.bank-page .card + .card,
+.bank-page .card + .inline-error,
+.bank-page .inline-error + .card {
+  margin-top: 16px;
+}
+
+.bank-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.bank-head h2 {
+  margin: 0 0 6px;
+  font-size: 19px;
+}
+
+.bank-facts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.bank-head .badge-progress {
+  gap: 8px;
+  padding: 5px 12px;
+}
+
+.pipeline {
+  position: relative; /* the send-back arrow is drawn over it */
+  display: flex;
+  align-items: center;
+}
+
+.pipe-stage {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pipe-stage.lead {
+  flex: 1 1 0;
+  min-width: 170px;
+}
+
+.pipe-stage.agents {
+  flex: 1.7 1 0;
+}
+
+.pipe-stage.judge {
+  flex: 1.15 1 0;
+  min-width: 190px;
+}
+
+.pipe-label {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}
+
+/* the link between two stages; it sits level with the cards, below the labels */
+.pipe-link {
+  flex: 0 0 30px;
+  height: 2px;
+  margin-top: 28px;
+  background: var(--line2);
+}
+
+.pipe-link.lit {
+  background: var(--accent-line);
+}
+
+/* work moving through: dashes flow to the right */
+.pipe-link.flowing {
+  background: repeating-linear-gradient(90deg, var(--accent) 0 7px, transparent 7px 12px);
+  background-size: 24px 2px;
+  animation: pipe-flow 0.5s linear infinite;
+}
+
+@keyframes pipe-flow {
+  to {
+    background-position: 24px 0;
+  }
+}
+
+/* the agents' lanes: a short stub on each side of every card, and rails joining each lane to the next */
+.pipe-lanes {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 16px;
+}
+
+.lane-rail {
+  position: absolute;
+  top: 34px;
+  bottom: -44px; /* down to the next lane's stub: the 10px gap + 34px */
+  width: 2px;
+  background: var(--accent-line);
+}
+
+.lane-rail.left {
+  left: -16px;
+}
+
+.lane-rail.right {
+  right: -16px;
+}
+
+.pipe-lane:last-child .lane-rail {
+  display: none;
+}
+
+.pipe-lane {
+  position: relative;
+}
+
+.pipe-lane::before,
+.pipe-lane::after {
+  content: '';
+  position: absolute;
+  top: 34px;
+  width: 16px;
+  height: 2px;
+  background: var(--accent-line);
+}
+
+.pipe-lane::before {
+  left: -16px;
+}
+
+.pipe-lane::after {
+  right: -16px;
+}
+
+/* one member of the panel (a button: click it to inspect) */
+button.step-card {
+  width: 100%;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
+}
+
+button.step-card:hover:not(:disabled) {
+  border-color: var(--accent-line);
+  background: var(--panel-tint);
+}
+
+.step-card.waiting {
+  opacity: 0.6;
+}
+
+.step-card.thinking {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.step-card.revising {
+  border-color: #e7b56d;
+  box-shadow: 0 0 0 3px var(--warn-soft);
+}
+
+.step-card.failed {
+  background: var(--bad-soft);
+  border-color: #f0b8b8;
+}
+
+.step-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.step-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.step-name {
+  font-weight: 700;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-status {
+  flex: none;
+  padding: 1px 8px;
+  font-size: 11.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  border-radius: 999px;
+}
+
+.step-status.waiting {
+  color: var(--muted);
+  background: var(--panel2);
+}
+
+.step-status.thinking {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.step-status.revising {
+  color: var(--warn);
+  background: var(--warn-soft);
+}
+
+.step-status.done {
+  color: var(--good);
+  background: var(--good-soft);
+}
+
+.step-status.failed {
+  color: var(--bad);
+  background: var(--panel);
+}
+
+.step-message,
+.step-note {
+  margin: 4px 0 0;
+  font-size: 12.5px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+/* what it was told: the lead's brief (or the judge's note), in quotes */
+.step-message {
+  color: var(--text2);
+  font-style: italic;
+}
+
+.step-message.from-judge {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--warn-ink);
+}
+
+.step-note {
+  color: var(--muted);
+}
+
+.step-note.failed {
+  color: var(--bad);
+}
+
+.pipe-lane .step-message {
+  -webkit-line-clamp: 2;
+}
+
+.pipe-lane .step-note {
+  -webkit-line-clamp: 1;
+}
+
+.step-sent {
+  margin: 8px 0 0;
+  padding: 6px 8px;
+  font-size: 12.5px;
+  line-height: 1.35;
+  color: var(--warn-ink);
+  background: var(--warn-soft);
+  border-radius: 8px;
+}
+
+.pipeline-foot {
+  margin: 14px 0 0;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.bank-wait {
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* ---- the questions ---- */
+.bank-questions-head {
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.bank-questions-head h2 {
+  margin: 0;
+}
+
+.bank-q-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.bank-q {
+  padding: 14px 16px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.bank-q.picked {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.bank-q-top {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.bank-q-top input[type='checkbox'],
+.bank-voice input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.q-type {
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 650;
+  color: var(--text2);
+  background: var(--panel2);
+  border-radius: 999px;
+}
+
+.q-difficulty {
+  padding: 2px 8px;
+  font-weight: 650;
+  text-transform: capitalize;
+  border-radius: 999px;
+}
+
+.q-difficulty.easy {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.q-difficulty.medium {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+}
+
+.q-difficulty.hard {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+}
+
+.q-agent {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.q-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+/* the question really comes from your own words (code checked the quote) */
+.q-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 650;
+  color: var(--accent);
+  cursor: help;
+}
+
+.bank-q-text {
+  margin: 8px 0 2px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.bank-q-detail {
+  margin: 2px 0 0;
+}
+
+.bank-q-answer {
+  margin-top: 8px;
+  font-size: 13.5px;
+}
+
+.bank-q-answer summary {
+  width: fit-content;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  cursor: pointer;
+}
+
+.bank-q-answer ul {
+  margin: 6px 0 0;
+  padding-left: 20px;
+  color: var(--text2);
+}
+
+.q-quote {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.bank-q-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+.bank-q-actions:empty {
+  display: none;
+}
+
+.q-practised {
+  margin-right: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--good);
+}
+
+/* picking Q&A questions: this bar stays in view at the bottom while you scroll */
+.bank-bar {
+  position: sticky;
+  bottom: 14px;
+  z-index: 3;
+  margin-top: 14px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  background: var(--panel);
+  border: 1px solid var(--accent-line);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(31, 35, 40, 0.12);
+}
+
+.bank-bar-text {
+  flex: 1;
+  min-width: 180px;
+  font-size: 14px;
+}
+
+.bank-voice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.bank-dropped {
+  margin-top: 16px;
+  font-size: 13.5px;
+}
+
+.bank-dropped summary {
+  width: fit-content;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.bank-dropped ul {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.bank-dropped li {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--text2);
+}
+
+/* ---- past banks ---- */
+.past-banks {
+  padding: 4px 8px;
+}
+
+.past-bank {
+  padding: 12px 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.past-bank:first-child {
+  border-top: 0;
+}
+
+.past-bank-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  color: var(--text);
+}
+
+.past-bank-title {
+  font-weight: 650;
+}
+
+.past-bank-counts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+/* ---- smaller screens: the pipeline goes top to bottom ---- */
+@media (max-width: 1099px) {
+  .pipeline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .pipe-stage.lead,
+  .pipe-stage.judge {
+    min-width: 0;
+  }
+
+  .pipe-link {
+    flex: 0 0 22px;
+    width: 2px;
+    height: 22px;
+    margin: 0 auto;
+  }
+
+  .pipe-link.flowing {
+    background: repeating-linear-gradient(180deg, var(--accent) 0 7px, transparent 7px 12px);
+    background-size: 2px 24px;
+    animation-name: pipe-flow-down;
+  }
+
+  .pipe-lanes {
+    padding: 0;
+  }
+
+  .lane-rail,
+  .pipe-lane::before,
+  .pipe-lane::after,
+  .send-back {
+    display: none;
+  }
+}
+
+@keyframes pipe-flow-down {
+  to {
+    background-position: 0 24px;
+  }
+}
+
+@media (max-width: 720px) {
+  .bank-fields,
+  .agent-picks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pipe-link.flowing {
+    animation: none;
+  }
+}
+
+/* the agents' focus text comes from the backend in lower case */
+.agent-pick-text .muted::first-letter {
+  text-transform: uppercase;
+}
+
+/* ---- review mode, tools, send-back, timeline, inspector ---- */
+
+/* you (the human in the loop): a person in a teal tile */
+.agent-avatar.human {
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1.5px dashed var(--accent-line);
+}
+
+.step-card.human {
+  border-style: dashed;
+}
+
+.step-card.needs_you {
+  border-color: var(--accent);
+  border-style: solid;
+  box-shadow: 0 0 0 3px var(--accent-soft);
+  animation: your-turn 1.6s ease-in-out infinite;
+}
+
+@keyframes your-turn {
+  50% {
+    box-shadow: 0 0 0 6px var(--accent-soft);
+  }
+}
+
+.step-card.skipped {
+  opacity: 0.45;
+}
+
+.step-card.skipped .step-name {
+  text-decoration: line-through;
+}
+
+.step-status.needs_you {
+  color: #fff;
+  background: var(--accent-fill);
+}
+
+.step-status.skipped {
+  color: var(--muted);
+  background: var(--panel2);
+}
+
+/* the short line from the lead or the judge down to its "You" card */
+.human-link {
+  width: 2px;
+  height: 14px;
+  margin: -6px auto;
+  background: repeating-linear-gradient(180deg, var(--accent-line) 0 4px, transparent 4px 7px);
+}
+
+.human-link.waiting {
+  background: repeating-linear-gradient(180deg, var(--accent) 0 4px, transparent 4px 7px);
+}
+
+/* the agent's tool calls: what it searched in your documents */
+.step-searches {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.step-search {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.step-search .icon {
+  flex: none;
+  color: var(--accent);
+}
+
+.step-search b {
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.step-sent.blocked {
+  color: var(--muted);
+  background: var(--panel2);
+}
+
+/* messages moving: dashes flow along the stub into a busy agent */
+.pipe-lane.busy::before {
+  background: repeating-linear-gradient(90deg, var(--accent) 0 5px, transparent 5px 8px);
+  background-size: 16px 2px;
+  animation: pipe-flow 0.5s linear infinite;
+}
+
+/* the judge's message back to an agent: a dashed orange curve with an arrowhead */
+.send-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.send-back path {
+  fill: none;
+  stroke: #e0913a;
+  stroke-width: 2;
+  stroke-dasharray: 6 5;
+}
+
+.send-back marker path {
+  fill: #e0913a;
+  stroke: none;
+}
+
+.send-back.moving path {
+  animation: send-back-flow 0.6s linear infinite;
+}
+
+@keyframes send-back-flow {
+  to {
+    stroke-dashoffset: -11;
+  }
+}
+
+/* the timeline: one row per member, bars on a shared time axis */
+.timeline-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.timeline-head h2 {
+  margin: 0;
+}
+
+.timeline {
+  --names: 120px;
+  position: relative;
+}
+
+.timeline-grid {
+  position: absolute;
+  top: 0;
+  bottom: 22px;
+  left: var(--names);
+  right: 0;
+}
+
+.timeline-grid span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.timeline-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--names) minmax(0, 1fr);
+  align-items: center;
+  height: 26px;
+}
+
+.timeline-name {
+  padding-right: 10px;
+  font-size: 12.5px;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-track {
+  position: relative;
+  height: 100%;
+}
+
+.timeline-bar {
+  position: absolute;
+  top: 8px;
+  height: 10px;
+  background: var(--bar-color);
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px var(--panel); /* a thin gap where bars touch */
+}
+
+.timeline-bar.human {
+  background: repeating-linear-gradient(135deg, var(--accent-soft) 0 4px, transparent 4px 7px);
+  border: 1.5px dashed var(--accent);
+}
+
+.timeline-bar.failed {
+  background: repeating-linear-gradient(135deg, var(--bad) 0 3px, var(--bad-soft) 3px 6px);
+}
+
+.timeline-axis {
+  position: relative;
+  height: 22px;
+  margin-left: var(--names);
+}
+
+.timeline-axis span {
+  position: absolute;
+  top: 6px;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the review panel: your turn */
+.review-panel {
+  border: 1.5px solid var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft), var(--shadow);
+}
+
+.review-head {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.review-head h2 {
+  margin: 2px 0 2px;
+}
+
+.review-plan {
+  margin: 14px 0;
+  padding: 10px 12px;
+  font-size: 14px;
+  background: var(--panel2);
+  border-radius: 10px;
+}
+
+.review-agents,
+.review-drops {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.review-agent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.review-agent.off {
+  opacity: 0.55;
+}
+
+.review-agent-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-agent-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.review-agent-head input,
+.review-drop input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+.review-agent textarea,
+.review-sendback textarea {
+  resize: vertical;
+  font-size: 13.5px;
+}
+
+.review-sendback {
+  margin-bottom: 6px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--warn-soft);
+  border: 1px solid #f0d3a8;
+  border-radius: 12px;
+}
+
+.review-sendback-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.review-drop {
+  padding: 10px 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.review-drop.kept {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.review-drop-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.review-drop-text {
+  font-weight: 600;
+}
+
+.review-keep {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.review-actions {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.review-chip {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+
+.review-badge {
+  color: #fff;
+  background: var(--accent-fill);
+}
+
+/* the judge's scores, 1 to 5 */
+.score-chips {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.score-chip {
+  padding: 1px 7px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--text2);
+  background: var(--panel2);
+  border-radius: 999px;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-chip.low {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+}
+
+.q-restored {
+  padding: 2px 8px;
+  font-weight: 650;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+}
+
+.bank-docs {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* the side panel (AgentInspector) */
+.inspector-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.inspector-section .section-title {
+  margin-top: 20px;
+}
+
+.inspector-section p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.inspector-judge-note {
+  padding: 8px 10px;
+  color: var(--warn-ink);
+  background: var(--warn-soft);
+  border-radius: 8px;
+}
+
+.inspector-brief {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13.5px;
+}
+
+.inspector-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 13.5px;
+}
+
+.inspector-list li.dropped {
+  color: var(--muted);
+}
+
+.inspector-runs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+}
+
+.inspector-runs li {
+  padding: 4px 0;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+}
+
+.inspector-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.inspector-table th,
+.inspector-table td {
+  padding: 5px 6px;
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+
+.inspector-table th:first-child,
+.inspector-table td:first-child {
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .step-card.needs_you,
+  .send-back.moving path,
+  .pipe-lane.busy::before {
+    animation: none;
+  }
+}

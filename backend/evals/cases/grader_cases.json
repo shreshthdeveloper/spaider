@@ -1,0 +1,182 @@
+[
+  {
+    "id": "generator-complete",
+    "kind": "complete",
+    "question": "What is a generator in Python and why would you use one?",
+    "key_points": ["uses yield to produce values", "produces values lazily, one at a time", "saves memory compared to building a full list", "can only be iterated once"],
+    "answer": "A generator is a function that uses yield instead of return. Each time you ask for the next item it runs until the next yield, so values are produced lazily, one at a time. That saves memory because you never build the whole list. Once it is used up you can't loop over it again.",
+    "expected": [true, true, true, true],
+    "note": "Says all four ideas plainly."
+  },
+  {
+    "id": "generator-paraphrase",
+    "kind": "paraphrase",
+    "question": "What is a generator in Python and why would you use one?",
+    "key_points": ["uses yield to produce values", "produces values lazily, one at a time", "saves memory compared to building a full list", "can only be iterated once"],
+    "answer": "Instead of handing back everything at once, the function gives you one item, pauses, and carries on from where it stopped when you ask again. So a million rows never sit in RAM together.",
+    "expected": [false, true, true, false],
+    "note": "Different words, same ideas for lazy and memory. Never mentions yield or single use."
+  },
+  {
+    "id": "generator-wrong",
+    "kind": "wrong",
+    "question": "What is a generator in Python and why would you use one?",
+    "key_points": ["uses yield to produce values", "produces values lazily, one at a time", "saves memory compared to building a full list", "can only be iterated once"],
+    "answer": "A generator is a function that returns a list of all the values at once, which makes it faster than a normal loop, and you can reuse it as many times as you want.",
+    "expected": [false, false, false, false],
+    "note": "Confident but wrong on every point. A lenient grader may give credit for the word 'values'."
+  },
+  {
+    "id": "idempotent-complete",
+    "kind": "complete",
+    "question": "What does it mean for an HTTP method to be idempotent? Give examples.",
+    "key_points": ["calling it many times has the same effect as calling it once", "PUT and DELETE are idempotent", "POST is not idempotent", "it matters because requests get retried"],
+    "answer": "Idempotent means repeating the request has the same effect as doing it once. PUT and DELETE are idempotent; POST isn't, because two POSTs can create two orders. It matters because clients and proxies retry requests after a timeout.",
+    "expected": [true, true, true, true],
+    "note": "All four, with an example."
+  },
+  {
+    "id": "idempotent-partial",
+    "kind": "partial",
+    "question": "What does it mean for an HTTP method to be idempotent? Give examples.",
+    "key_points": ["calling it many times has the same effect as calling it once", "PUT and DELETE are idempotent", "POST is not idempotent", "it matters because requests get retried"],
+    "answer": "It means sending the same request twice leaves the server in the same state as sending it once. That is why a client can safely retry it after a timeout.",
+    "expected": [true, false, false, true],
+    "note": "Definition and retries, but no methods named."
+  },
+  {
+    "id": "idempotent-keywords",
+    "kind": "keyword_list",
+    "question": "What does it mean for an HTTP method to be idempotent? Give examples.",
+    "key_points": ["calling it many times has the same effect as calling it once", "PUT and DELETE are idempotent", "POST is not idempotent", "it matters because requests get retried"],
+    "answer": "Idempotent: GET, PUT, DELETE, POST, retries, same effect.",
+    "expected": [false, false, false, false],
+    "note": "A list of words, nothing is actually stated. It never says which methods ARE idempotent. A strict grader gives nothing."
+  },
+  {
+    "id": "kafka-complete",
+    "kind": "complete",
+    "question": "How do Kafka consumer groups work?",
+    "key_points": ["consumers in a group share the partitions of a topic", "each partition is read by only one consumer in the group", "a consumer joining or leaving triggers a rebalance", "different groups each get every message"],
+    "answer": "A consumer group is a set of consumers that split a topic's partitions between them, and inside one group a partition goes to exactly one consumer. When a consumer joins or crashes, Kafka rebalances and hands its partitions to the others. A second group reading the same topic gets its own full copy of every message.",
+    "expected": [true, true, true, true],
+    "note": "All four."
+  },
+  {
+    "id": "kafka-vague",
+    "kind": "vague",
+    "question": "How do Kafka consumer groups work?",
+    "key_points": ["consumers in a group share the partitions of a topic", "each partition is read by only one consumer in the group", "a consumer joining or leaving triggers a rebalance", "different groups each get every message"],
+    "answer": "Consumer groups let you scale reading. Kafka handles the balancing for you behind the scenes.",
+    "expected": [false, false, false, false],
+    "note": "Too vague: 'handles the balancing' never says what triggers it or what is shared."
+  },
+  {
+    "id": "kafka-partial",
+    "kind": "partial",
+    "question": "How do Kafka consumer groups work?",
+    "key_points": ["consumers in a group share the partitions of a topic", "each partition is read by only one consumer in the group", "a consumer joining or leaving triggers a rebalance", "different groups each get every message"],
+    "answer": "Each partition is consumed by just one member of the group, and if you start more consumers than there are partitions, the extra ones sit idle.",
+    "expected": [false, true, false, false],
+    "note": "Only the one-consumer-per-partition rule."
+  },
+  {
+    "id": "index-partial",
+    "kind": "partial",
+    "question": "What is a database index, and what does it cost?",
+    "key_points": ["a data structure (often a B-tree) that speeds up lookups", "it avoids scanning the whole table", "it slows down writes because the index must be updated too", "it uses extra storage"],
+    "answer": "An index is usually a B-tree kept next to the table, so the database can jump straight to the rows instead of scanning everything. The price is slower inserts and updates, since every write must also update the index.",
+    "expected": [true, true, true, false],
+    "note": "Strong, but never mentions storage."
+  },
+  {
+    "id": "index-wrong",
+    "kind": "wrong",
+    "question": "What is a database index, and what does it cost?",
+    "key_points": ["a data structure (often a B-tree) that speeds up lookups", "it avoids scanning the whole table", "it slows down writes because the index must be updated too", "it uses extra storage"],
+    "answer": "An index sorts the table on disk so every query becomes fast, and it has no real downside.",
+    "expected": [false, false, false, false],
+    "note": "Wrong: says there is no cost, and 'every query becomes fast' is not the lookup idea."
+  },
+  {
+    "id": "rag-complete",
+    "kind": "complete",
+    "question": "Explain retrieval-augmented generation (RAG).",
+    "key_points": ["documents are split into chunks and turned into vectors (embeddings)", "the question is embedded and the most similar chunks are retrieved", "the retrieved chunks are added to the prompt as context", "it reduces hallucination and lets the answer cite sources"],
+    "answer": "You split the documents into chunks and embed each one as a vector. At question time you embed the question too and fetch the most similar chunks. Those chunks go into the prompt as context, so the model answers from real text, hallucinates less, and can cite the page it used.",
+    "expected": [true, true, true, true],
+    "note": "All four."
+  },
+  {
+    "id": "rag-partial",
+    "kind": "partial",
+    "question": "Explain retrieval-augmented generation (RAG).",
+    "key_points": ["documents are split into chunks and turned into vectors (embeddings)", "the question is embedded and the most similar chunks are retrieved", "the retrieved chunks are added to the prompt as context", "it reduces hallucination and lets the answer cite sources"],
+    "answer": "You put your documents in a vector database, and when a user asks something you find the closest matches and give them to the model together with the question.",
+    "expected": [false, true, true, false],
+    "note": "Never says chunks or embeddings, and nothing about why it helps."
+  },
+  {
+    "id": "hashmap-complete",
+    "kind": "complete",
+    "question": "What is the time complexity of looking up a key in a hash map, and when can it get worse?",
+    "key_points": ["average lookup is O(1)", "the worst case is O(n) when many keys collide", "a good hash function and resizing keep it close to O(1)"],
+    "answer": "On average it's O(1). If many keys land in the same bucket it degrades to O(n) in the worst case. A good hash function plus resizing the table when it fills up keeps lookups near O(1).",
+    "expected": [true, true, true],
+    "note": "All three."
+  },
+  {
+    "id": "hashmap-paraphrase",
+    "kind": "paraphrase",
+    "question": "What is the time complexity of looking up a key in a hash map, and when can it get worse?",
+    "key_points": ["average lookup is O(1)", "the worst case is O(n) when many keys collide", "a good hash function and resizing keep it close to O(1)"],
+    "answer": "Usually it takes constant time, no matter how big the map is.",
+    "expected": [true, false, false],
+    "note": "'Constant time' is O(1) in other words. Nothing about the worst case."
+  },
+  {
+    "id": "hashmap-empty",
+    "kind": "empty",
+    "question": "What is the time complexity of looking up a key in a hash map, and when can it get worse?",
+    "key_points": ["average lookup is O(1)", "the worst case is O(n) when many keys collide", "a good hash function and resizing keep it close to O(1)"],
+    "answer": "I'm not sure, sorry.",
+    "expected": [false, false, false],
+    "note": "No content."
+  },
+  {
+    "id": "cache-partial",
+    "kind": "partial",
+    "question": "What are common cache invalidation strategies?",
+    "key_points": ["time-to-live (TTL) expiry", "write-through: update the cache when the database is written", "cache-aside: the app loads data into the cache on a miss", "evicting least recently used (LRU) items when full"],
+    "answer": "Usually you give each entry a TTL so it expires on its own, and when the cache is full you throw out the least recently used items.",
+    "expected": [true, false, false, true],
+    "note": "TTL and LRU only."
+  },
+  {
+    "id": "cache-off-topic",
+    "kind": "off_topic",
+    "question": "What are common cache invalidation strategies?",
+    "key_points": ["time-to-live (TTL) expiry", "write-through: update the cache when the database is written", "cache-aside: the app loads data into the cache on a miss", "evicting least recently used (LRU) items when full"],
+    "answer": "Caching is when you keep data in memory to make things faster. Redis is a popular cache that many companies use.",
+    "expected": [false, false, false, false],
+    "note": "Talks about caching, not about invalidation."
+  },
+  {
+    "id": "temperature-complete",
+    "kind": "complete",
+    "question": "What does the temperature setting do in an LLM?",
+    "key_points": ["it controls how random the output is", "a low temperature gives focused, repeatable answers", "a high temperature gives more creative, varied answers"],
+    "answer": "Temperature controls how random the sampling is. Near zero the model picks the most likely words, so answers are focused and repeatable; higher values make it more creative and varied.",
+    "expected": [true, true, true],
+    "note": "All three."
+  },
+  {
+    "id": "temperature-wrong",
+    "kind": "wrong",
+    "question": "What does the temperature setting do in an LLM?",
+    "key_points": ["it controls how random the output is", "a low temperature gives focused, repeatable answers", "a high temperature gives more creative, varied answers"],
+    "answer": "Temperature controls how long the answer is: a higher temperature makes the model write more.",
+    "expected": [false, false, false],
+    "note": "A common mix-up with max tokens."
+  }
+]

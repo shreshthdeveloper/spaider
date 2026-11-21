@@ -1,0 +1,1303 @@
+/* The Documents page: upload at the top (the drop box and the live pipeline), your documents below. */
+
+/* ---- upload card: the drop box on the left, the pipeline on the right (stacked on small screens) ---- */
+.ingest-card {
+  padding: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 26px;
+}
+
+@media (min-width: 1000px) {
+  .ingest-card {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
+/* ---- the drop box ---- */
+.drop-zone {
+  min-height: 260px;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--panel2);
+  border: 2px dashed var(--line2);
+  border-radius: 16px;
+  transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+.drop-zone:hover,
+.drop-zone:focus-visible {
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+  outline: none;
+}
+
+.drop-zone:hover .drop-icon {
+  transform: translateY(-3px);
+}
+
+/* a file is being dragged over the page */
+.drop-zone.dragging {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  border-style: solid;
+  box-shadow: 0 0 0 6px rgba(47, 111, 98, 0.1);
+  transform: scale(1.01);
+}
+
+.drop-zone.dragging .drop-icon {
+  color: #fff;
+  background: var(--accent-fill);
+  animation: drop-bounce 0.8s ease-in-out infinite;
+}
+
+.drop-zone.busy {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.drop-icon {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 8px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--panel);
+  border: 1px solid var(--accent-line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  transition: transform 0.2s, background 0.2s, color 0.2s;
+}
+
+.drop-title {
+  font-size: 16px;
+  font-weight: 650;
+}
+
+.drop-button {
+  margin-top: 12px;
+  padding: 8px 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--panel);
+  border: 1px solid var(--accent-line);
+  border-radius: 10px;
+}
+
+@keyframes drop-bounce {
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* ---- the live pipeline ---- */
+.ingest {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ingest h3 {
+  margin: 2px 0 16px;
+  font-size: 15px;
+}
+
+.ingest-file {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: doc-fade-up 0.3s ease-out;
+}
+
+.ingest-badge {
+  width: 30px;
+  height: 30px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 50%;
+}
+
+.ingest-badge.done {
+  color: #fff;
+  background: var(--good);
+  animation: doc-pop 0.35s ease-out;
+}
+
+.ingest-badge.error {
+  color: #fff;
+  background: var(--bad);
+}
+
+.ingest-file-text {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.ingest-file-text b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pipe {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.pipe-step {
+  position: relative;
+  padding-bottom: 14px;
+  display: flex;
+  gap: 12px;
+}
+
+.pipe-step:last-child {
+  padding-bottom: 0;
+}
+
+/* the line down to the next step */
+.pipe-step:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 15px;
+  top: 32px;
+  bottom: 2px;
+  width: 2px;
+  background: var(--line);
+  border-radius: 2px;
+}
+
+.pipe-icon {
+  position: relative;
+  z-index: 1;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1.5px solid var(--line2);
+  border-radius: 50%;
+  transition: color 0.3s, background 0.3s, border-color 0.3s;
+}
+
+.pipe-body {
+  flex: 1;
+  min-width: 0;
+  padding-top: 5px;
+}
+
+.pipe-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pipe-result {
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--good);
+  animation: doc-fade-in 0.3s backwards;
+  animation-delay: calc(var(--i) * 0.15s + 0.1s);
+}
+
+/* nothing uploaded yet: the steps explain what will happen */
+.pipe-step.idle .pipe-icon {
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-color: var(--accent-line);
+}
+
+/* waiting for the upload to finish */
+.pipe-step.waiting {
+  opacity: 0.5;
+}
+
+/* the upload itself: a real progress bar */
+.pipe-step.active .pipe-icon {
+  color: #fff;
+  background: var(--accent-fill);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 5px var(--accent-soft);
+}
+
+.pipe-bar {
+  height: 6px;
+  margin-top: 9px;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: 999px;
+}
+
+.pipe-bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent-fill);
+  border-radius: inherit;
+  transition: width 0.2s;
+}
+
+/* the backend is working: a wave runs down the steps and the lines flow */
+.pipe-step.working .pipe-icon {
+  color: var(--accent);
+  border-color: var(--accent);
+  animation: pipe-wave 1.6s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.25s);
+}
+
+.pipe-step.working::before {
+  background: repeating-linear-gradient(180deg, var(--accent) 0 6px, transparent 6px 12px);
+  background-size: 2px 24px;
+  opacity: 0.6;
+  animation: pipe-flow 0.6s linear infinite;
+}
+
+/* done: each step ticks in turn */
+.pipe-step.done .pipe-icon {
+  color: #fff;
+  background: var(--good);
+  border-color: var(--good);
+  animation: doc-pop 0.35s ease-out backwards;
+  animation-delay: calc(var(--i) * 0.15s);
+}
+
+.pipe-step.done::before {
+  background: var(--good);
+  transform-origin: top;
+  animation: grow-down 0.3s ease-out backwards;
+  animation-delay: calc(var(--i) * 0.15s + 0.1s);
+}
+
+.pipe-step.failed .pipe-icon {
+  color: #fff;
+  background: var(--bad);
+  border-color: var(--bad);
+}
+
+.ingest-actions {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  animation: doc-fade-up 0.3s ease-out 0.6s backwards;
+}
+
+@keyframes pipe-wave {
+  0%,
+  60%,
+  100% {
+    background: var(--panel);
+    box-shadow: 0 0 0 0 rgba(47, 111, 98, 0);
+  }
+  30% {
+    background: var(--accent-soft);
+    box-shadow: 0 0 0 6px rgba(47, 111, 98, 0.18);
+  }
+}
+
+@keyframes pipe-flow {
+  to {
+    background-position: 0 24px;
+  }
+}
+
+@keyframes grow-down {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes doc-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  70% {
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes doc-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@keyframes doc-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.notice {
+  margin-top: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  border: 1px solid;
+  border-radius: 12px;
+}
+
+.notice.ok {
+  color: var(--good-ink);
+  background: var(--good-soft);
+  border-color: #bfe3cc;
+}
+
+.notice.error {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+  border-color: var(--bad-line);
+}
+
+/* ---- your documents ---- */
+.library {
+  margin-top: 30px;
+}
+
+.library-head {
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.library-head h2 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+}
+
+.library .notice {
+  margin: 0 0 12px;
+}
+
+.doc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 14px;
+}
+
+.doc-card {
+  min-height: 160px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+  animation: doc-fade-up 0.35s ease-out backwards;
+  animation-delay: calc(var(--i) * 0.04s);
+}
+
+.doc-card:hover {
+  border-color: var(--accent-line);
+  box-shadow: 0 2px 4px rgba(31, 35, 40, 0.05), 0 12px 28px rgba(31, 35, 40, 0.08);
+  transform: translateY(-2px);
+}
+
+/* the document you just uploaded glows for a moment */
+.doc-card.new {
+  border-color: #9fd1b2;
+  animation: doc-fade-up 0.35s ease-out backwards, doc-new 2.4s ease-out;
+}
+
+@keyframes doc-new {
+  0%,
+  40% {
+    box-shadow: 0 0 0 5px rgba(21, 128, 61, 0.16);
+  }
+}
+
+.doc-card-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.doc-card-top .icon-btn {
+  margin-left: auto;
+}
+
+/* a little PDF file */
+.doc-thumb {
+  width: 40px;
+  height: 46px;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  color: #a4442d;
+  background: #fbeee9;
+  border: 1px solid #f0cfc4;
+  border-radius: 6px 12px 6px 6px;
+}
+
+.doc-thumb b {
+  font-size: 9.5px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.doc-name {
+  margin: 4px 0 0;
+  display: -webkit-box;
+  overflow: hidden;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.35;
+  word-break: break-word;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.doc-meta {
+  display: flex;
+  gap: 14px;
+}
+
+.doc-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.doc-foot {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--line);
+}
+
+.doc-ask {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13.5px;
+  font-weight: 650;
+  color: var(--accent);
+}
+
+.doc-ask:hover {
+  text-decoration: underline;
+}
+
+/* placeholders while the list loads */
+.doc-card.skeleton {
+  background: linear-gradient(90deg, var(--panel) 0%, var(--panel2) 50%, var(--panel) 100%);
+  background-size: 200% 100%;
+  animation: doc-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes doc-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.library-empty {
+  padding: 34px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  color: var(--muted);
+  border: 2px dashed var(--line2);
+  border-radius: var(--radius);
+}
+
+.library-empty p {
+  margin: 0;
+}
+
+/* used by the document chat page too */
+.doc-icon {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 9px;
+}
+
+.icon-btn {
+  padding: 6px;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+}
+
+.icon-btn:hover:not(:disabled) {
+  color: var(--bad);
+  background: var(--bad-soft);
+}
+
+/* ---- while a file is dragged over the page ---- */
+.drop-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  padding: 18px;
+  display: grid;
+  background: var(--glass-strong);
+  backdrop-filter: blur(2px);
+  pointer-events: none; /* the drop itself is handled by the page */
+  animation: doc-fade-in 0.15s;
+}
+
+.drop-overlay-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 650;
+  color: var(--accent);
+  background: rgba(230, 240, 236, 0.6);
+  border: 3px dashed var(--accent);
+  border-radius: 22px;
+}
+
+.drop-overlay-box .icon {
+  animation: drop-bounce 0.8s ease-in-out infinite;
+}
+
+@media (max-width: 760px) {
+  .drop-zone {
+    min-height: 190px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .drop-zone.dragging .drop-icon,
+  .drop-overlay-box .icon,
+  .pipe-step.working .pipe-icon,
+  .pipe-step.working::before,
+  .doc-card.skeleton {
+    animation: none;
+  }
+}
+
+/* ---- asking one document: the chat on the left, "Under the hood" on the right ---- */
+.doc-chat-layout {
+  height: calc(100vh - 56px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 1150px) {
+  .doc-chat-layout {
+    grid-template-columns: minmax(0, 1fr) 440px;
+  }
+}
+
+.docs-page .doc-chat {
+  min-height: 0;
+}
+
+.back-link {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--text2);
+  border-radius: 9px;
+}
+
+.back-link:hover {
+  background: var(--hover);
+}
+
+.doc-thumb.small {
+  width: 32px;
+  height: 38px;
+}
+
+.doc-thumb.small b {
+  font-size: 8px;
+}
+
+.doc-facts {
+  margin-top: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.doc-facts span + span::before {
+  content: '·';
+  margin-right: 6px;
+}
+
+.doc-facts .grounded {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--good);
+}
+
+.doc-facts .grounded::before {
+  color: var(--muted);
+}
+
+.exchange {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* the answer shown in the "Under the hood" panel */
+.exchange.selected .msg.ai .msg-bubble {
+  border-color: var(--accent-line);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.msg-bubble.searching {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--muted);
+}
+
+.msg-bubble.not-found {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: var(--text2);
+  background: var(--mid-soft);
+  border-color: var(--mid-line);
+}
+
+.msg-bubble.not-found .icon {
+  flex: none;
+  margin-top: 3px;
+  color: var(--warn);
+}
+
+.answer-error {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+  border: 1px solid var(--bad-line);
+}
+
+.cite {
+  display: inline-block;
+  margin: 0 2px;
+  padding: 0 7px;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1.6;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 999px;
+}
+
+.sources {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.source {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.source[open] {
+  flex-basis: 100%;
+}
+
+.source > summary {
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.source > summary::-webkit-details-marker {
+  display: none;
+}
+
+.source-chevron {
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+
+.source[open] .source-chevron {
+  transform: rotate(90deg);
+}
+
+.source-text {
+  margin: 0;
+  padding: 8px 12px 10px;
+  font-size: 13.5px;
+  color: var(--text2);
+  white-space: pre-wrap;
+  border-top: 1px solid var(--line);
+}
+
+button.how-btn {
+  margin-top: 8px;
+  padding: 4px 10px;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--accent);
+  background: transparent;
+  border-color: var(--accent-line);
+  border-radius: 999px;
+}
+
+button.how-btn:hover:not(:disabled) {
+  background: var(--accent-soft);
+}
+
+/* ---- the "Under the hood" panel ---- */
+.hood-card {
+  min-height: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.hood-head {
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.hood-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 650;
+}
+
+.hood-title .icon {
+  color: var(--accent);
+}
+
+.hood-body {
+  flex: 1;
+  min-height: 0;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.hood-empty {
+  margin-top: 30px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.hood-empty p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.hood-question {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  font-weight: 600;
+  background: var(--panel2);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+}
+
+.pipe-time {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+/* a step that did not run (no relevant chunk, so no AI call) */
+.pipe-step.skipped .pipe-icon {
+  color: var(--muted);
+  background: var(--panel2);
+  border-style: dashed;
+}
+
+.vector-strip {
+  width: 100%;
+  height: 26px;
+  margin-top: 8px;
+  display: block;
+  image-rendering: pixelated;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+
+.vector-text {
+  margin-top: 6px;
+  display: block;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.score-bars {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+button.score-line {
+  width: 100%;
+  padding: 5px 6px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 34px auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+}
+
+button.score-line:hover:not(:disabled) {
+  background: var(--hover);
+}
+
+.score-page {
+  font-weight: 650;
+}
+
+.score-track {
+  position: relative;
+  height: 10px;
+  background: var(--panel2);
+  border-radius: 999px;
+}
+
+.score-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--line2);
+  border-radius: 999px;
+  animation: score-grow 0.6s ease-out backwards;
+}
+
+.score-row.kept .score-fill {
+  background: var(--accent-fill);
+}
+
+/* the cutoff: a thin dark line across every bar */
+.score-cutoff {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--text2);
+  border-radius: 1px;
+}
+
+.score-value {
+  font-family: var(--mono);
+  text-align: right;
+}
+
+.score-label {
+  justify-self: start;
+  padding: 1px 8px;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 650;
+  border-radius: 999px;
+}
+
+.score-label.used {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.score-label.sent {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.score-label.below-cutoff {
+  color: var(--muted);
+  background: var(--panel2);
+}
+
+.score-text {
+  margin: 2px 6px 8px;
+  padding: 8px 10px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--text2);
+  white-space: pre-wrap;
+  background: var(--panel2);
+  border-radius: 8px;
+}
+
+@keyframes score-grow {
+  from {
+    width: 0;
+  }
+}
+
+.cited-pages {
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cited {
+  padding: 2px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+}
+
+.cited.ok {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.cited.dropped {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+}
+
+.hood-verdict {
+  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+.hood-verdict.found {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.hood-verdict.missing {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+}
+
+/* ---- the 3D vector map ---- */
+.map-canvas {
+  position: relative;
+  height: 380px;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 40%, #174a42 0%, #0c2622 60%, #071715 100%);
+  border-radius: 12px;
+  cursor: grab;
+}
+
+.map-canvas:active {
+  cursor: grabbing;
+}
+
+.map-canvas canvas {
+  display: block;
+}
+
+.map-tip {
+  position: absolute;
+  z-index: 2;
+  max-width: 240px;
+  padding: 7px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--glass-strong);
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transform: translate(12px, 12px);
+  pointer-events: none;
+}
+
+/* near the right edge, the tip opens to the left of the mouse */
+.map-tip.left {
+  transform: translate(calc(-100% - 12px), 12px);
+}
+
+.map-tip-group {
+  font-weight: 600;
+  color: var(--text2);
+}
+
+/* the name floating over each group (placed by lib/vectorScene.js) */
+.map-label {
+  position: absolute;
+  z-index: 1;
+  padding: 3px 9px 3px 7px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 650;
+  white-space: nowrap;
+  color: #f2f8f6;
+  background: rgba(7, 23, 21, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  transform: translate(-50%, -100%);
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.map-label i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.map-label.faded {
+  opacity: 0.25;
+}
+
+/* the groups under the map: hover one to light it up */
+.group-list {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+button.group-chip {
+  padding: 4px 10px 4px 8px;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text2);
+  border-radius: 999px;
+}
+
+button.group-chip i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+button.group-chip.on {
+  border-color: var(--text2);
+}
+
+.map-keys {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+
+.map-keys span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-keys .diamond {
+  width: 9px;
+  height: 9px;
+  background: #e0a030;
+  transform: rotate(45deg);
+}
+
+.map-keys .ring {
+  width: 10px;
+  height: 10px;
+  background: #6f8f88;
+  border: 2px solid var(--text);
+  border-radius: 50%;
+}
+
+.map-keys .line {
+  width: 18px;
+  height: 0;
+  border-top: 2px solid var(--text);
+}
+
+.map-keys .line.faint {
+  border-top-color: var(--line2);
+}
+
+/* why the search picked these chunks: the question against each group */
+.why-box {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.why-title {
+  font-size: 13.5px;
+  font-weight: 700;
+}
+
+.why-box p {
+  margin: 4px 0 10px;
+  line-height: 1.5;
+}
+
+.why-row {
+  padding: 4px 0;
+  display: grid;
+  grid-template-columns: 10px minmax(0, 1.2fr) minmax(0, 1fr) 34px auto;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+}
+
+.why-row > i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.why-label {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.why-track {
+  height: 8px;
+  overflow: hidden;
+  background: var(--line);
+  border-radius: 999px;
+}
+
+.why-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  animation: score-grow 0.6s ease-out backwards;
+}
+
+.why-value {
+  font-family: var(--mono);
+  text-align: right;
+}
+
+.why-found {
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.why-box .why-note {
+  margin: 8px 0 0;
+}
+
+.map-note {
+  margin: 8px 0 0;
+  line-height: 1.5;
+}
+
+@media (max-width: 1149px) {
+  .doc-chat-layout {
+    height: auto;
+  }
+
+  .docs-page .doc-chat {
+    height: calc(100dvh - 150px);
+    min-height: 480px;
+  }
+
+  .hood-body {
+    overflow: visible;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score-fill {
+    animation: none;
+  }
+}
+
+/* the answer while it is still being written, word by word */
+.msg-bubble.writing p:last-child::after,
+.msg-bubble.writing li:last-child::after {
+  content: '';
+  width: 7px;
+  height: 14px;
+  margin-left: 3px;
+  display: inline-block;
+  vertical-align: -2px;
+  background: var(--accent-fill);
+  border-radius: 2px;
+  animation: rec-blink 0.9s infinite;
+}

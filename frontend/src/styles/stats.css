@@ -1,0 +1,742 @@
+/* Your spider (components/PetSpider.jsx) and the Stats page (pages/StatsPage.jsx). */
+
+/* ---- her colour in each mood (the backend picks the mood: services/stats/health.py) ---- */
+.mood-happy {
+  --spider-color: #2b8a5e;
+  --mood-ink: #1d6a46;
+}
+
+.mood-okay {
+  --spider-color: #c28a12;
+  --mood-ink: #855c05;
+}
+
+.mood-itchy {
+  --spider-color: #d2691e;
+  --mood-ink: #9a4510;
+}
+
+.mood-angry {
+  --spider-color: #c53030;
+  --mood-ink: var(--bad-ink);
+}
+
+/* itchy: one leg scratches her now and then */
+.mood-itchy .spider-legs.right path:nth-child(2) {
+  animation: pet-scratch 3.5s ease-in-out infinite;
+}
+
+/* angry: a short shake every few seconds */
+.mood-angry .spider-bob {
+  animation: pet-shake 4s ease-in-out infinite;
+}
+
+/* bored (you've done nothing for a while): one foot taps, slowly */
+.bored .spider-legs.left path:nth-child(4) {
+  animation: pet-tap 1.6s ease-in-out infinite;
+}
+
+@keyframes pet-scratch {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0);
+  }
+  64%,
+  72%,
+  80% {
+    transform: rotate(-30deg);
+  }
+  68%,
+  76%,
+  84% {
+    transform: rotate(6deg);
+  }
+}
+
+@keyframes pet-shake {
+  0%,
+  86%,
+  100% {
+    transform: translateX(0);
+  }
+  88%,
+  92%,
+  96% {
+    transform: translateX(-1.8px);
+  }
+  90%,
+  94%,
+  98% {
+    transform: translateX(1.8px);
+  }
+}
+
+@keyframes pet-tap {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-16deg);
+  }
+}
+
+/* ---- the pet, at the bottom of the sidebar ---- */
+.pet-wrap {
+  position: relative;
+  margin-top: auto; /* she pushes the status box down with her */
+}
+
+.pet-wrap + .side-foot {
+  margin-top: 0;
+}
+
+.pet {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 72px;
+  padding: 0 12px 0 6px;
+  overflow: hidden; /* her thread starts at the top edge */
+  color: var(--text);
+  background: var(--glass);
+  border: 1px solid var(--bg2-line);
+  border-radius: 12px;
+  transition: background 0.15s ease;
+}
+
+.pet:hover,
+.pet.on {
+  background: var(--panel);
+}
+
+/* her little corner web */
+.pet-web {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 64px;
+}
+
+.pet-web path {
+  fill: none;
+  stroke: #cdc3b2;
+  stroke-width: 0.9;
+}
+
+.pet-spider {
+  position: relative; /* above her web */
+  flex: none;
+  width: 54px;
+  align-self: flex-start;
+}
+
+.pet-spider .spider-art {
+  display: block;
+  width: 54px;
+  height: 65px;
+  margin-top: 2px;
+  overflow: visible;
+}
+
+/* her thread, thick enough to see at this size */
+.pet .spider-thread {
+  stroke: #9fb0aa;
+  stroke-width: 2.6;
+}
+
+/* when you finish something today: up her thread, a happy wiggle, and back down */
+.pet-spider.cheer .spider-art {
+  transform-origin: 50% 0;
+  animation: pet-cheer 1.8s ease-in-out 1;
+}
+
+.pet-spider.cheer .spider-legs path {
+  animation: spider-leg 0.18s ease-in-out 10 alternate;
+}
+
+@keyframes pet-cheer {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  30% {
+    transform: translateY(-16px) rotate(-7deg);
+  }
+  45% {
+    transform: translateY(-16px) rotate(7deg);
+  }
+  60% {
+    transform: translateY(-16px) rotate(-5deg);
+  }
+  75% {
+    transform: translateY(-16px) rotate(0);
+  }
+}
+
+.pet-info {
+  position: relative;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pet-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pet-mood {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--mood-ink);
+}
+
+.pet-streak {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text2);
+}
+
+.pet-streak .icon {
+  color: #e8590c;
+}
+
+.pet-line {
+  font-size: 11.5px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+/* "Yay! 4-day streak", for a few seconds above her */
+.pet-bubble {
+  position: absolute;
+  left: 4px;
+  bottom: calc(100% + 8px);
+  padding: 5px 11px;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 650;
+  color: #fff;
+  background: var(--mood-ink);
+  border-radius: 999px;
+  box-shadow: 0 4px 12px rgba(31, 35, 40, 0.18);
+  pointer-events: none;
+  opacity: 0;
+  animation: pet-bubble 3.6s ease forwards;
+}
+
+.pet-bubble::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 100%;
+  border: 6px solid transparent;
+  border-top-color: var(--mood-ink);
+}
+
+@keyframes pet-bubble {
+  0% {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  10%,
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+/* the narrow sidebar: just her, with the streak under her */
+@media (min-width: 861px) {
+  .sidebar.collapsed .pet-wrap {
+    width: 52px;
+  }
+
+  .sidebar.collapsed .pet {
+    flex-direction: column;
+    gap: 0;
+    padding: 0 0 6px;
+  }
+
+  .sidebar.collapsed .pet-spider {
+    align-self: center;
+  }
+}
+
+/* phones: she sits at the right of the top bar */
+@media (max-width: 860px) {
+  .pet-wrap {
+    order: 1;
+    margin: 0 0 0 auto;
+  }
+
+  .sidebar nav {
+    order: 2;
+  }
+
+  .pet {
+    min-height: 44px;
+    padding: 0 10px 0 4px;
+  }
+
+  .pet-web,
+  .pet-mood,
+  .pet-line {
+    display: none;
+  }
+
+  .pet-spider,
+  .pet-spider .spider-art {
+    width: 32px;
+    height: 40px;
+    margin-top: 0;
+  }
+}
+
+/* ---- the Stats page ---- */
+.stats-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(300px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.stats-side {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* the web: a square, with the flies laid over the drawing */
+.web-box {
+  position: relative;
+  width: min(100%, 600px);
+  aspect-ratio: 1;
+  margin: 0 auto;
+  container-type: inline-size;
+}
+
+.spider-web {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.web-spoke,
+.web-ring {
+  fill: none;
+  stroke: #b8c7c1;
+  stroke-width: 1.3;
+}
+
+.web-ring {
+  stroke-width: 1.1;
+}
+
+/* a neglected web turns dusty */
+.spider-web.dusty .web-spoke,
+.spider-web.dusty .web-ring {
+  stroke: #cbbfa9;
+}
+
+.web-mess path {
+  fill: none;
+  stroke: #a6956f;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+}
+
+.web-mess circle {
+  fill: #b9ab90;
+}
+
+.web-dew circle {
+  fill: #d7ece6;
+  stroke: #9cc8bb;
+  stroke-width: 0.8;
+}
+
+.web-dew .web-dew-shine {
+  fill: #fff;
+  stroke: none;
+}
+
+/* she sits in the middle and looks at the fly you point at */
+.web-hub {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 19%;
+  transform: translate(-50%, -54%);
+  pointer-events: none;
+}
+
+.web-hub .spider-art {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 100 / 120;
+}
+
+.web-hub .spider-thread {
+  display: none;
+}
+
+.web-hub .spider-pupil {
+  transform: translate(var(--look-x), var(--look-y));
+  transition: transform 0.2s ease;
+}
+
+/* a fly: a silk-wrapped bundle with its label under it */
+.fly {
+  position: absolute;
+  z-index: 1;
+  width: 132px;
+  margin-left: -66px;
+  margin-top: -19px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+  color: var(--text);
+}
+
+.fly-bug {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--text2);
+  background: repeating-linear-gradient(35deg, #f6f1e7 0 5px, #ebe3d4 5px 6.5px);
+  border: 1.5px solid #cdbfa8;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(31, 35, 40, 0.1);
+  transition: transform 0.15s ease;
+}
+
+.fly:hover .fly-bug,
+.fly:focus-visible .fly-bug {
+  transform: scale(1.12);
+}
+
+.fly-label {
+  max-width: 100%;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  background: var(--glass-strong);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.fly:hover .fly-label {
+  border-color: var(--accent-line);
+}
+
+.fly-weak .fly-bug,
+.web-task-icon.fly-weak {
+  color: var(--bad);
+}
+
+.fly-unfinished .fly-bug,
+.web-task-icon.fly-unfinished {
+  color: var(--warn);
+}
+
+.fly-today .fly-bug,
+.fly-bank .fly-bug,
+.web-task-icon.fly-today,
+.web-task-icon.fly-bank {
+  color: var(--accent);
+}
+
+/* cleared: the bundle is gone, a tick is left */
+.fly.done .fly-bug {
+  color: var(--good);
+  background: var(--good-soft);
+  border: 1.5px dashed #8fcca6;
+  box-shadow: none;
+}
+
+.fly.done .fly-label {
+  color: var(--muted);
+}
+
+/* too narrow for the labels: the list under the web has them */
+@container (max-width: 480px) {
+  .fly-label {
+    display: none;
+  }
+
+  .fly-bug {
+    width: 30px;
+    height: 30px;
+  }
+
+  .fly {
+    margin-top: -15px;
+  }
+}
+
+/* her mood under the web */
+.mood-panel {
+  max-width: 600px;
+  margin: 8px auto 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+
+.mood-head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mood-name {
+  font-size: 18px;
+  font-weight: 750;
+  color: var(--mood-ink);
+}
+
+.mood-score {
+  margin-left: auto;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.health-bar {
+  height: 10px;
+  margin: 8px 0 10px;
+  overflow: hidden;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.health-bar span {
+  display: block;
+  height: 100%;
+  background: var(--spider-color);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.mood-reasons {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13.5px;
+}
+
+.mood-reasons li {
+  padding: 4px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--text2);
+}
+
+.mood-cost {
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+
+/* the streak */
+.streak-hero {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.streak-flame {
+  align-self: center;
+  color: var(--line2);
+}
+
+.streak-flame.lit {
+  color: #e8590c;
+}
+
+.streak-number {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.streak-unit {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text2);
+}
+
+.streak-card .section-title {
+  margin-top: 18px;
+}
+
+/* the last four weeks: one square a day, darker = more done (one teal, light to dark) */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
+  max-width: 300px;
+}
+
+.calendar-weekday {
+  font-size: 11px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.calendar-cell {
+  aspect-ratio: 1;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
+
+.calendar-cell.level-0 {
+  background: var(--panel2);
+  border-color: var(--line);
+}
+
+.calendar-cell.level-1 {
+  background: #cfe5dc;
+}
+
+.calendar-cell.level-2 {
+  background: #7fb9a6;
+}
+
+.calendar-cell.level-3 {
+  background: #2f6f62;
+}
+
+.calendar-cell.today {
+  outline: 2px solid var(--text2);
+  outline-offset: 1px;
+}
+
+.calendar-legend {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.calendar-legend .calendar-cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* the totals, two by two */
+.totals-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 14px;
+}
+
+.total-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.total-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.total-number {
+  font-size: 28px;
+  font-weight: 750;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* the same tasks as a list, with the full detail */
+.web-list {
+  margin-top: 18px;
+}
+
+.web-task {
+  padding: 10px 6px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  border-top: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.web-task:hover {
+  background: var(--hover);
+}
+
+.web-task-icon {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  background: var(--panel2);
+  border-radius: 50%;
+}
+
+.web-task.done .web-task-icon {
+  color: var(--good);
+  background: var(--good-soft);
+}
+
+.web-task-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.web-task-title {
+  font-weight: 600;
+}
+
+.web-task.done .web-task-title {
+  color: var(--muted);
+}
+
+@media (max-width: 1100px) {
+  .stats-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pet-spider.cheer .spider-art {
+    animation: none;
+  }
+}
