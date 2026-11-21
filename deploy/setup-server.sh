@@ -6,9 +6,10 @@ set -euo pipefail  # stop at the first error
 REPO_URL="$1"
 APP_DIR="$HOME/spaider"
 
-echo "1. System packages: Python tools and git"
+echo "1. System packages: Python tools, git, rsync, and Node.js 24 (to build the React app on the server)"
 sudo apt-get update -q
-sudo apt-get install -y -q python3-venv python3-pip git
+sudo apt-get install -y -q python3-venv python3-pip git rsync
+sudo snap install node --classic --channel=24/stable
 
 echo "2. 2 GB of swap: memory on disk, so installing packages on a 2 GB server can't run out of memory"
 if [ ! -f /swapfile ]; then
