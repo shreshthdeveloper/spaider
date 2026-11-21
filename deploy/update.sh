@@ -30,7 +30,7 @@ if [ "$UPDATE_BACKEND" = yes ]; then
   sudo systemctl daemon-reload
   sudo systemctl restart spaider
   for second in $(seq 1 30); do
-    if curl -fsS http://localhost:8000/api/health > /dev/null; then break; fi
+    if curl -fs http://localhost:8000/api/health > /dev/null 2>&1; then break; fi   # not up yet: try again in a second
     if [ "$second" = 30 ]; then
       echo "The backend did not start. Its last log lines:"
       sudo journalctl -u spaider -n 40 --no-pager
@@ -44,8 +44,8 @@ fi
 if [ "$UPDATE_FRONTEND" = yes ]; then
   echo "== 3. Frontend: build the React app and publish it"
   cd frontend
-  npm ci --no-audit --no-fund
-  npm run build
+  npm ci --no-audit --no-fund --loglevel=error   # only real errors (Excalidraw's React-version warnings are harmless)
+  npm run build -- --logLevel warn                # only warnings, not the list of every built file
   rsync -a --delete dist/ /var/www/spaider/   # Caddy serves this folder; --delete keeps it an exact copy
   cd ..
   echo "   website files updated"
@@ -54,7 +54,7 @@ fi
 if [ "$UPDATE_CADDY" = yes ]; then
   echo "== 4. Caddy: new settings"
   sudo cp deploy/Caddyfile /etc/caddy/Caddyfile
-  sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+  sudo caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile   # stops here, with the reason, if the file has a mistake
   sudo systemctl reload caddy
 fi
 
