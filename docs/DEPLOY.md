@@ -1,6 +1,6 @@
 # Deploying SpAIder on AWS
 
-This guide puts SpAIder online for testing: about **$7 for 10 days** (Mumbai region).
+This guide puts SpAIder online for testing: about **$8 for 10 days** (Sydney region).
 First the big picture, then every step in order.
 
 ## 1. The big picture
@@ -20,7 +20,7 @@ flowchart LR
 | **S3** | Holds the built React app (plain files). | Files don't need a server. S3 + CloudFront is the standard way to host a website on AWS. |
 | **EC2** | Runs the Flask backend. | It needs a real computer: Python, LangGraph, the Chroma folder, background threads. |
 | **Elastic IP** | A fixed address for the EC2. | Without it, the address changes every time you stop and start the server, and CloudFront would lose it. |
-| **MongoDB Atlas** | The database. | Free forever (M0), and in the same region (Mumbai), so it's fast. |
+| **MongoDB Atlas** | The database. | Free forever (M0), and in the same region as the EC2 (Sydney), so it's fast. |
 
 Because the browser only ever talks to CloudFront, the page and `/api` share one address: no CORS setup needed.
 
@@ -38,7 +38,9 @@ Because the browser only ever talks to CloudFront, the page and `/api` share one
 | 8 | Test everything | Browser | 10 min |
 | 9 | Add a password before sharing the link | (the security step) | |
 
-Use the **Asia Pacific (Mumbai) ap-south-1** region for everything (top right of the AWS console).
+Use the **Asia Pacific (Sydney) ap-southeast-2** region for everything. On the AWS free plan's "projects" setup, each
+project is fixed to one region (ours is Sydney) and the console shows no region menu. Users in India add only about
+0.15 s per API call; the website files come from CloudFront's servers near them anyway.
 
 ---
 
@@ -88,7 +90,7 @@ Use the **Asia Pacific (Mumbai) ap-south-1** region for everything (top right of
 2. **Elastic IP:** EC2 → Elastic IPs → Allocate → then Actions → Associate → pick `spaider-backend`.
 3. Open the instance and copy two things:
    - **Elastic IP** (like `13.233.10.20`): for SSH and for Atlas.
-   - **Public IPv4 DNS** (like `ec2-13-233-10-20.ap-south-1.compute.amazonaws.com`): for CloudFront.
+   - **Public IPv4 DNS** (like `ec2-13-236-10-20.ap-southeast-2.compute.amazonaws.com`): for CloudFront.
 
 ### Step 4. Let the EC2 into Atlas
 
@@ -141,7 +143,7 @@ Useful later: `sudo systemctl status spaider` (is it running?) and `sudo journal
 
 ### Step 6. Create the S3 bucket and upload the website
 
-1. **S3 → Create bucket:** name `spaider-site-<some digits>` (bucket names are unique across all of AWS), region Mumbai,
+1. **S3 → Create bucket:** name `spaider-site-<some digits>` (bucket names are unique across all of AWS), region Sydney,
    **keep "Block all public access" on.** Only CloudFront will read it.
 2. Build the website on your laptop:
    ```bash
@@ -254,7 +256,7 @@ It needs the AWS CLI on your laptop, logged in as a user that may only do this j
    ```
    (Put in your bucket name, 12-digit account ID and distribution ID.)
 3. That user → Security credentials → Create access key → *Command Line Interface* → then on the laptop:
-   `aws configure` (paste the two keys, region `ap-south-1`).
+   `aws configure` (paste the two keys, region `ap-southeast-2`).
 
 **Why backend first when both change:** the new page may call a new API route. If the page went live first, it
 would call a route that doesn't exist yet. Keep old routes working until the new page is live (like `/answer` next
@@ -279,11 +281,11 @@ using short-lived credentials (OIDC) instead of the access key above.
 
 | Item | Running all the time | Stopped 16 hours a day |
 |---|---|---|
-| EC2 t3.small ($0.0224/hour) | $5.40 | $1.80 |
-| 20 GB disk (also while stopped) | about $0.60 | about $0.60 |
+| EC2 t3.small ($0.0264/hour) | $6.35 | $2.10 |
+| 20 GB disk (also while stopped) | about $0.65 | about $0.65 |
 | Elastic IP ($0.005/hour) | $1.20 | $1.20 |
 | S3 (a few hundred MB) | under $0.05 | under $0.05 |
 | CloudFront and data out | $0 (free allowance) | $0 |
-| **Total** | **about $7** | **about $3.70** |
+| **Total** | **about $8.20** | **about $4** |
 
 OpenAI usage is billed by OpenAI, separately. Set a monthly limit in the OpenAI dashboard.

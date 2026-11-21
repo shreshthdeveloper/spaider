@@ -1,0 +1,25 @@
+# Caddy: HTTPS for the whole app, on the EC2 itself (used until CloudFront is available on the account).
+#
+# The address is the Elastic IP written with dashes, plus ".sslip.io". sslip.io is a free DNS service:
+# 15-134-148-124.sslip.io points to 15.134.148.124. Having a name (not just an IP) lets Caddy get a free
+# HTTPS certificate from Let's Encrypt, with no domain to buy. Change it if the Elastic IP ever changes.
+15-134-148-124.sslip.io {
+	# A username and password for the whole site, because the app has no login and spends OpenAI credits.
+	# The file holds the password's hash; setup-caddy.sh makes it on the server, so it is never in git.
+	import /etc/caddy/site-password.caddy
+
+	# API calls go to the Flask backend (gunicorn, on port 8000 of this same server)
+	handle /api/* {
+		reverse_proxy localhost:8000 {
+			# pass each live message (Server-Sent Events) on at once, instead of collecting them
+			flush_interval -1
+		}
+	}
+
+	# Everything else is the React build, copied from the laptop into /var/www/spaider
+	handle {
+		root * /var/www/spaider
+		encode gzip
+		file_server
+	}
+}
