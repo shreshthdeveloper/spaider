@@ -584,6 +584,13 @@
   margin-top: 14px;
 }
 
+/* Bella's greeting above the first question (text mode) */
+.question-intro {
+  margin: 10px 0 4px;
+  color: var(--text2);
+  line-height: 1.55;
+}
+
 /* ---- the report ---- */
 .report-hero {
   display: flex;

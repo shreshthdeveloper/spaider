@@ -8,14 +8,16 @@ from datetime import datetime, timedelta, timezone
 from models.chat import ChatSession
 from models.coding import CodingSession
 from models.interview import Interview
+from models.panel import PanelInterview
 from models.question_bank import QuestionBank
 from models.whiteboard import WhiteboardSession
 
-# The three kinds of round. Each one is "finished" once its report is written.
+# The kinds of round. Each one is "finished" once its report is written.
 ROUNDS = {
     "interview": Interview,
     "coding": CodingSession,
     "whiteboard": WhiteboardSession,
+    "panel": PanelInterview,
 }
 
 QUIZ_MESSAGES = 3  # a day counts as a quiz day once you send this many messages in the practice chat

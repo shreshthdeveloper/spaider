@@ -13,7 +13,8 @@ from openai import OpenAI
 from models.trace import LLMTrace
 
 SPEECH_MODEL = "gpt-4o-mini-tts"   # OpenAI plans to retire it in Jan 2027; change the name here when needed
-VOICES = ["marin", "ash"]          # the first that works is used
+VOICES = ["marin", "ash"]          # Bella's voice: the first that works is used
+PANEL_VOICES = ["coral", "cedar", "sage", "ash", "shimmer"]  # the panelists' voices (services/panel/panelists.py)
 SPEAKING_STYLE = "Speak like a friendly, calm, professional technical interviewer. Natural pace, clear words."
 TRANSCRIBE_MODEL = "gpt-transcribe"
 
@@ -30,12 +31,15 @@ def _client():
     return OpenAI()
 
 
-def speak(text):
+def speak(text, voice_name=""):
     """MP3 audio of the interviewer saying `text`. The same text is only paid for once: it is cached on disk.
-    MP3 audio of the interviewer saying `text`. The same text is only paid for once: it is cached on disk."""
+    voice_name: a panelist's voice (one of PANEL_VOICES); empty means Bella's. If it fails, Bella's voice is used."""
+    voices = list(VOICES)
+    if voice_name in PANEL_VOICES:
+        voices.insert(0, voice_name)
     # The file name is a fingerprint (hash) of the text and the voice settings: the same sentence always gives
     # the same name, so we can find it again, and a different sentence never collides with it.
-    key = hashlib.sha256(f"{SPEECH_MODEL}|{VOICES}|{SPEAKING_STYLE}|{text}".encode()).hexdigest()
+    key = hashlib.sha256(f"{SPEECH_MODEL}|{voices}|{SPEAKING_STYLE}|{text}".encode()).hexdigest()
     cached = CACHE_DIR / f"{key}.mp3"
     if cached.exists():
         return cached.read_bytes()
@@ -43,7 +47,7 @@ def speak(text):
     started = time.perf_counter()
     audio = None
     last_error = None
-    for voice in VOICES:  # try each voice until one works
+    for voice in voices:  # try each voice until one works
         try:
             response = _client().audio.speech.create(
                 model=SPEECH_MODEL, voice=voice, input=text, instructions=SPEAKING_STYLE, response_format="mp3"
@@ -63,17 +67,17 @@ def speak(text):
     return audio
 
 
-def prepare(texts):
+def prepare(texts, voice_name=""):
     """Makes the voice for these texts in the background and caches it, so later each one plays at once
-    (speak() finds it in the cache). Used for an interview's planned questions."""
-    threading.Thread(target=_speak_all, args=(texts,), daemon=True).start()
+    (speak() finds it in the cache). Used for planned questions: an interview's, or one panelist's."""
+    threading.Thread(target=_speak_all, args=(texts, voice_name), daemon=True).start()
 
 
-def _speak_all(texts):
+def _speak_all(texts, voice_name):
     """speak() each text, one after another (this runs in the background thread from prepare())."""
     for text in texts:
         try:
-            speak(text)
+            speak(text, voice_name)
         except VoiceError:
             return  # no OpenAI voice right now: the browser will ask again when it needs it
 

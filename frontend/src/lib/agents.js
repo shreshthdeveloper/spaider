@@ -9,6 +9,11 @@ export const AGENT_LOOKS = {
   resume: { icon: 'file', color: '#d0562f' },
   recruiter: { icon: 'users', color: '#c2417e' },
   judge: { icon: 'eye', color: '#6e6862', role: 'The bar raiser: an LLM judge' },
+  // the panel interview's panelists (backend/services/panel/panelists.py); resume shares the colour above
+  tech_lead: { icon: 'bolt', color: '#2f6fd0' },
+  hiring_manager: { icon: 'trophy', color: '#b7791f' },
+  architect: { icon: 'server', color: '#7b4fd6' },
+  hr: { icon: 'users', color: '#c2417e' },
   you: { icon: 'user', color: '#2f6f62', role: 'Human in the loop' },
 }
 

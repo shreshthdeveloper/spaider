@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { estimateMinutes } from '../../lib/format'
 import { stopSpeaking } from '../../lib/voice'
+import FocusButton from '../focus/FocusButton'
 import Icon from '../Icon'
 import SpiderLoader from '../SpiderLoader'
 import SpokenCaption from '../SpokenCaption'
@@ -152,6 +153,9 @@ export default function CallView({
   if (busy === 'retrying' || busy === 'ending') status = <>One moment…</>
   if (!q) status = <><b>The last step didn't finish</b> · nothing is lost</>
 
+  // the caption shows Bella's greeting while she says it, then the question
+  const captionLine = q?.intro && voice.speech?.text === q.intro ? q.intro : q?.question
+
   let you = answer
   if (listening) you = 'listening…'
   if (transcribing) you = '…'
@@ -167,6 +171,7 @@ export default function CallView({
           {interview.topic}
           <span className="muted"> · {details}</span>
         </div>
+        <FocusButton small />
         <button className="small" onClick={onXray} title="See every step the AI took, and why">
           <Icon name="eye" size={15} />
           X-ray
@@ -203,7 +208,7 @@ export default function CallView({
           )}
 
           {voice.needsClick && (
-            <button className="primary big stage-play" onClick={voice.replay}>
+            <button className="primary big stage-play" onClick={voice.replayAll}>
               <Icon name="play" size={16} />
               Hear the question
             </button>
@@ -226,7 +231,7 @@ export default function CallView({
           {captions && q && (
             <div className="captions">
               <div className={`caption${listening ? ' dim' : ''}`}>
-                <b>{INTERVIEWER.name}:</b> <SpokenCaption key={q.question} text={q.question} voice={voice} />
+                <b>{INTERVIEWER.name}:</b> <SpokenCaption key={captionLine} text={captionLine} voice={voice} />
               </div>
               {you && (
                 <div className="caption me">

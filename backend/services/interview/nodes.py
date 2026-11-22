@@ -70,12 +70,13 @@ def ask(state):
     Returns: answer and ended
     Next:    after_ask() picks grade, or write_report if the candidate ended the interview
     """
-    # Nothing may run before interrupt(), because this function runs again on resume.
+    # Nothing that changes anything may run before interrupt(), because this function runs again on resume.
     reply = interrupt({
         "question": state["current_question"],
         "number": state["index"] + 1,
         "total": len(state["questions"]),
         "is_follow_up": state["follow_ups"] > 0,
+        "intro": _intro_if_first(state),
     })
 
     if reply["action"] == "end":
@@ -99,21 +100,35 @@ def grade(state):
     Returns: last_grade (this answer's grade) and results (every grade so far)
     Next:    route() is called and picks follow_up, next_question or write_report
     """
-    answer = state["answer"]
-    points = state["current_points"]
+    checked = check_answer(state["current_question"], state["current_points"], state["answer"])
+    graded = {
+        "question": state["current_question"],
+        "answer": state["answer"],
+        "score": checked["score"],
+        "covered": checked["covered"],
+        "missed": checked["missed"],
+        "feedback": checked["feedback"],
+        "is_follow_up": state["follow_ups"] > 0,
+    }
+    return {"last_grade": graded, "results": state["results"] + [graded]}
 
-    # The LLM judge says, for each key point: covered or not, plus a quote from the answer.
+
+def check_answer(question, points, answer):
+    """Grades one answer against its key points. The panel interview uses it too.
+
+    The LLM judge says, for each key point, covered or not, with a quote from the answer. Code checks every
+    quote and computes the score out of 5: the LLM never sets the score.
+    Returns {"score", "covered", "missed", "feedback"}."""
     judge = get_model().with_structured_output(Grade)
     result = judge.invoke([
         SystemMessage(JUDGE_PROMPT),
         HumanMessage(
-            f"Question: {state['current_question']}\n\n"
+            f"Question: {question}\n\n"
             f"Key points:\n{_numbered(points)}\n"
             f"<candidate_answer>\n{answer}\n</candidate_answer>"
         ),
     ])
 
-    # Code checks every quote and computes the score. The LLM never sets the score.
     covered = []
     missed = []
     for i, point in enumerate(points):
@@ -121,18 +136,8 @@ def grade(state):
             covered.append(point)
         else:
             missed.append(point)
-
     score = round(5 * len(covered) / len(points)) if points else 0
-    graded = {
-        "question": state["current_question"],
-        "answer": answer,
-        "score": score,
-        "covered": covered,
-        "missed": missed,
-        "feedback": result.feedback,
-        "is_follow_up": state["follow_ups"] > 0,
-    }
-    return {"last_grade": graded, "results": state["results"] + [graded]}
+    return {"score": score, "covered": covered, "missed": missed, "feedback": result.feedback}
 
 
 # ----------------------------------------------------------------------------- 4. route
@@ -231,6 +236,13 @@ def write_report(state):
 
 
 # ----------------------------------------------------------------------------- small helpers
+def _intro_if_first(state):
+    """Bella's greeting, but only with the very first question ("" after that, and for older interviews)."""
+    if state["index"] == 0 and state["follow_ups"] == 0 and not state["results"]:
+        return state.get("intro", "")
+    return ""
+
+
 def _numbered(points):
     """["a", "b"] -> "1. a\\n2. b\\n" """
     text = ""

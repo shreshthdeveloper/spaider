@@ -268,12 +268,12 @@ export function getTrace(id) {
 // ---- Voice (mock interview)
 
 // MP3 audio of the interviewer saying `text`. Throws if OpenAI voice is unavailable,
-// so the caller can use the browser's own voice instead.
-export async function requestSpeech(text) {
+// so the caller can use the browser's own voice instead. voice: a panelist's voice, or '' for Bella's.
+export async function requestSpeech(text, voice = '') {
   const res = await fetch('/api/voice/speak', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ text }),
+    body: JSON.stringify({ text, voice }),
   })
   if (!res.ok) throw apiError('OpenAI voice is not available', res.status)
   return res.blob()
@@ -451,4 +451,67 @@ export function getEval(id) {
 // Runs a suite ('grader' or 'judge') in the background. It calls the real AI.
 export function runEval(suite) {
   return request('/api/evals', { method: 'POST', body: JSON.stringify({ suite }) })
+}
+
+// ---- Resume grind (backend/routes/resume_grind.py)
+// { resume: {...} }, or { resume: null } before the first upload
+export function getResume() {
+  return request('/api/resume')
+}
+
+// The first resume, or a new version of it: a PDF file, or pasted text.
+export function uploadResume({ file, text }) {
+  const form = new FormData()
+  if (file) form.append('file', file)
+  else form.append('text', text)
+  return request('/api/resume', { method: 'POST', body: form })
+}
+
+// count: 3, 5 or 8 lines · mode: 'text' or 'voice'. Returns the interview it started.
+export async function startResumeGrind({ count, mode }) {
+  const view = await request('/api/resume/grind', { method: 'POST', body: JSON.stringify({ count, mode }) })
+  notifyRecentChanged()
+  return view
+}
+
+export function deleteResume() {
+  return request('/api/resume', { method: 'DELETE' })
+}
+
+// ---- Panel interview (backend/routes/panel.py)
+export function listPanelists() {
+  return request('/api/panels/panelists')
+}
+
+export function listPanels() {
+  return request('/api/panels')
+}
+
+// form is a FormData: role, company, level, jd or jd_file, resume or resume_file, use_resume_grind,
+// panelists (2 to 4 of them), num_questions, follow_ups
+export async function startPanel(form) {
+  const view = await request('/api/panels', { method: 'POST', body: form })
+  notifyRecentChanged()
+  return view
+}
+
+export function getPanel(id) {
+  return request(`/api/panels/${encodeURIComponent(id)}`)
+}
+
+// Live: onStep('start', { id, node, who }) and onStep('finish', { id }) for every step while the panel works.
+export async function answerPanelLive(id, answer, onStep) {
+  const view = await streamRequest(`/api/panels/${encodeURIComponent(id)}/answer/live`, { answer }, onStep)
+  notifyRecentChanged()
+  return view
+}
+
+export async function endPanel(id) {
+  const view = await request(`/api/panels/${encodeURIComponent(id)}/end`, { method: 'POST' })
+  notifyRecentChanged()
+  return view
+}
+
+export function retryPanel(id) {
+  return request(`/api/panels/${encodeURIComponent(id)}/retry`, { method: 'POST' })
 }

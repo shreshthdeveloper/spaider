@@ -17,6 +17,7 @@ class Interview(Document):
     difficulty = StringField(choices=["easy", "medium", "hard", "mixed"], default="mixed")
     max_follow_ups = IntField(min_value=0, max_value=2, default=1)  # follow-ups allowed per question
     mode = StringField(choices=["text", "voice"], default="text")  # voice = the interviewer speaks
+    source = StringField(default="")             # where it came from: "resume" = a Resume grind, "" = a topic
     status = StringField(required=True, choices=["in_progress", "finished"], default="in_progress")
     overall = FloatField()                       # the final score, set when the interview finishes
     created_at = DateTimeField(default=utc_now)

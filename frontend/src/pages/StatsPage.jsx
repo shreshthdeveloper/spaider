@@ -10,6 +10,7 @@ const ROUND_TILES = [
   { kind: 'interview', label: 'Interviews', icon: 'target' },
   { kind: 'coding', label: 'Coding rounds', icon: 'code' },
   { kind: 'whiteboard', label: 'Whiteboards', icon: 'pen' },
+  { kind: 'panel', label: 'Panel interviews', icon: 'users' },
 ]
 
 const FLY_ICONS = { today: 'flag', bank: 'layers', unfinished: 'clock', weak: 'target' }

@@ -14,7 +14,9 @@ from routes.documents import documents_bp
 from routes.evals import evals_bp
 from routes.health import health_bp
 from routes.interview import interview_bp
+from routes.panel import panel_bp
 from routes.question_bank import question_bank_bp
+from routes.resume_grind import resume_grind_bp
 from routes.stats import stats_bp
 from routes.traces import traces_bp
 from routes.voice import voice_bp
@@ -40,6 +42,8 @@ def create_app():
     app.register_blueprint(stats_bp, url_prefix="/api")
     app.register_blueprint(question_bank_bp, url_prefix="/api")
     app.register_blueprint(evals_bp, url_prefix="/api")
+    app.register_blueprint(resume_grind_bp, url_prefix="/api")
+    app.register_blueprint(panel_bp, url_prefix="/api")
 
     return app
 

@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { answerInterviewLive, endInterview, getInterview, retryInterview } from '../../lib/api'
 import { plural } from '../../lib/format'
 import { useInterviewVoice } from '../../lib/useInterviewVoice'
 import ConfirmDialog from '../ConfirmDialog'
+import FocusButton from '../focus/FocusButton'
 import Icon from '../Icon'
 import SpiderLoader from '../SpiderLoader'
 import { SpiderArt } from '../SpiderLoader'
@@ -10,6 +11,8 @@ import CallView from './CallView'
 import InterviewReport from './InterviewReport'
 import InterviewXray from './InterviewXray'
 import { doingNow, STEP_NAMES } from './steps'
+
+const NO_PREFACE = [] // the same empty list every time (see useInterviewVoice)
 
 const DIFFICULTY_LABELS = { easy: 'Easy', medium: 'Medium', hard: 'Hard', mixed: 'Mixed difficulty' }
 
@@ -47,8 +50,11 @@ export default function InterviewSession({ id }) {
   }, [id])
 
   // Voice: the interviewer reads each new question aloud; you can answer with the mic.
+  // Before the first question, Bella introduces herself (the backend sends her greeting with it).
   const questionText = interview?.question?.question
-  const voice = useInterviewVoice(questionText, interview?.mode)
+  const introText = interview?.question?.intro || ''
+  const preface = useMemo(() => (introText ? [{ text: introText, voice: '' }] : NO_PREFACE), [introText])
+  const voice = useInterviewVoice(questionText, interview?.mode, '', preface)
 
   // Text mode: put the cursor in the answer box whenever a new question appears.
   // (Not in voice mode: focusing would scroll the page away from the interviewer.)
@@ -226,6 +232,7 @@ export default function InterviewSession({ id }) {
           <div className="muted small">{settingsLine(interview)}</div>
         </div>
         <div className="row">
+          <FocusButton />
           <button onClick={() => setXrayOpen(true)} title="See every step the AI took, and why">
             <Icon name="eye" size={16} />
             X-ray
@@ -250,11 +257,12 @@ export default function InterviewSession({ id }) {
               <span className="interviewer-badge spider-face">
                 <SpiderArt />
               </span>
-              <span className="interviewer-name">Interviewer</span>
+              <span className="interviewer-name">Bella</span>
               <span className={`chip${q.is_follow_up ? ' chip-follow' : ''}`}>
                 {q.is_follow_up ? 'Follow-up on your answer' : `Question ${q.number} of ${q.total}`}
               </span>
             </div>
+            {q.intro && <p className="question-intro">{q.intro}</p>}
             <p className="question-text">{q.question}</p>
             {grading && (
               <div className="question-status muted">

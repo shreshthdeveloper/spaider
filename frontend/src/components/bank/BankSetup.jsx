@@ -333,7 +333,8 @@ export default function BankSetup() {
   )
 }
 
-function StepTitle({ number, title, children }) {
+// (Also used by the panel interview setup.)
+export function StepTitle({ number, title, children }) {
   return (
     <div className="setup-step">
       <span className="step-number">{number}</span>
@@ -345,7 +346,7 @@ function StepTitle({ number, title, children }) {
   )
 }
 
-function ChipChoice({ label, options, value, onChange }) {
+export function ChipChoice({ label, options, value, onChange }) {
   return (
     <div className="bank-choice">
       <span className="field-label">{label}</span>
@@ -367,7 +368,7 @@ function ChipChoice({ label, options, value, onChange }) {
 }
 
 // A text box, or a PDF instead of it. value = { text, file }.
-function TextOrPdf({ label, value, onChange, placeholder }) {
+export function TextOrPdf({ label, value, onChange, placeholder }) {
   const fileRef = useRef(null)
 
   function pick(e) {

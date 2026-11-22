@@ -16,6 +16,8 @@ from services import voice
 from services.interview.graph import build_interview_graph
 from services.interview.xray import timeline
 
+MAX_SUBJECT = 80  # a topic longer than this (a pasted job description) is called "the role you shared"
+
 
 @lru_cache
 def get_interview_graph():
@@ -29,11 +31,16 @@ def _thread_config(interview):
     return {"configurable": {"thread_id": str(interview.id)}}
 
 
-def start_interview(topic, num_questions, difficulty="mixed", max_follow_ups=1, mode="text", questions=None):
+def start_interview(topic, num_questions, difficulty="mixed", max_follow_ups=1, mode="text", questions=None, source=""):
     """questions: a ready plan ([{"question", "key_points"}], e.g. from a question bank), or None to let the
-    AI plan."""
+    AI plan. source: "resume" for a Resume grind, so its report can link back to your resume."""
     interview = Interview(
-        topic=topic, num_questions=num_questions, difficulty=difficulty, max_follow_ups=max_follow_ups, mode=mode
+        topic=topic,
+        num_questions=num_questions,
+        difficulty=difficulty,
+        max_follow_ups=max_follow_ups,
+        mode=mode,
+        source=source,
     )
     interview.save()
     start_state = {
@@ -41,6 +48,7 @@ def start_interview(topic, num_questions, difficulty="mixed", max_follow_ups=1, 
         "num_questions": num_questions,
         "difficulty": difficulty,
         "max_follow_ups": max_follow_ups,
+        "intro": _greeting(topic, num_questions, max_follow_ups, source),
     }
     if questions:
         start_state["questions"] = questions
@@ -60,6 +68,31 @@ def start_interview(topic, num_questions, difficulty="mixed", max_follow_ups=1, 
             later_questions.append(item["question"])
         voice.prepare(later_questions)
     return build_response(interview)
+
+
+def _greeting(topic, num_questions, max_follow_ups, source):
+    """How Bella opens the interview, before the first question. Fixed words (no AI), so it's instant, like the
+    whiteboard and coding rounds' greetings. A Resume grind gets its own."""
+    opening = "Hi, I'm Bella, a senior engineer here, and I'll be your interviewer today."
+    if source == "resume":
+        return (
+            f"{opening} We'll go through {_count(num_questions, 'line')} of your resume, the weakest first. For each "
+            "one, I'll ask you to back it up: what you did yourself, how you measured it, and what went wrong. Let's start."
+        )
+    subject = topic.strip().split("\n")[0].rstrip(".")
+    if len(subject) > MAX_SUBJECT:
+        subject = "the role you shared"
+    follow_up = ""
+    if max_follow_ups > 0:
+        follow_up = " If an answer leaves something out, I'll ask a follow-up."
+    return f"{opening} We'll talk about {subject}: {_count(num_questions, 'question')}.{follow_up} Take your time, and think out loud. Let's start."
+
+
+def _count(number, word):
+    """1 question, 5 questions."""
+    if number == 1:
+        return f"1 {word}"
+    return f"{number} {word}s"
 
 
 def submit_answer(interview, text):
@@ -137,6 +170,7 @@ def build_response(interview):
         "difficulty": interview.difficulty,
         "max_follow_ups": interview.max_follow_ups,
         "mode": interview.mode,
+        "source": interview.source,
         "answered": len(state.get("results", [])),
         "question": None,
         "report": None,

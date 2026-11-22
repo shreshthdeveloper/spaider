@@ -67,14 +67,23 @@ export default function InterviewReport({ interview }) {
             <Icon name="eye" size={16} />
             X-ray
           </button>
-          <button onClick={practiceAgain} disabled={restarting}>
-            {restarting ? <span className="spinner small" /> : <Icon name="repeat" size={16} />}
-            Practice this topic again
-          </button>
-          <a className="button-link primary" href="#/interview">
-            <Icon name="plus" size={16} />
-            New interview
-          </a>
+          {interview.source === 'resume' ? (
+            <a className="button-link primary" href="#/resume">
+              <Icon name="idcard" size={16} />
+              See your resume
+            </a>
+          ) : (
+            <>
+              <button onClick={practiceAgain} disabled={restarting}>
+                {restarting ? <span className="spinner small" /> : <Icon name="repeat" size={16} />}
+                Practice this topic again
+              </button>
+              <a className="button-link primary" href="#/interview">
+                <Icon name="plus" size={16} />
+                New interview
+              </a>
+            </>
+          )}
         </div>
       </header>
 

@@ -69,14 +69,14 @@ function waitForAvatar() {
 
 // Plays `text` in the interviewer's voice and resolves when it has finished (or was stopped).
 // onStart(ms) is called when the sound actually begins, with how long it lasts (so captions can keep pace). Rejects with a NotAllowedError
-// if the browser wants a click before it plays sound.
-export async function speak(text, onLevel = () => {}, onStart = () => {}) {
+// if the browser wants a click before it plays sound. voiceName: a panelist's voice ('' = Bella's).
+export async function speak(text, onLevel = () => {}, onStart = () => {}, voiceName = '') {
   stopSpeaking()
   const id = latest
 
   // Fetch the voice and wait for the 3D interviewer at the same time.
   // If the OpenAI voice is not available, audio is null and the browser's own voice is used.
-  const [audio, avatar] = await Promise.all([requestSpeech(text).catch(() => null), waitForAvatar()])
+  const [audio, avatar] = await Promise.all([requestSpeech(text, voiceName).catch(() => null), waitForAvatar()])
   if (id !== latest) return // stopped, or a newer question came, while we were loading
 
   if (audio && avatar) return speakWithAvatar(avatar, audio, text, onStart, id)

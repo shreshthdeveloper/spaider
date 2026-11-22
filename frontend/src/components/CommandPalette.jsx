@@ -11,6 +11,9 @@ import Icon from './Icon'
 const PAGES = [
   { label: 'Mock interview', icon: 'target', page: 'interview' },
   { label: 'Question bank', icon: 'layers', page: 'bank' },
+  { label: 'Resume grind', icon: 'idcard', page: 'resume' },
+  { label: 'Panel interview', icon: 'users', page: 'panel' },
+  { label: 'Past panel interviews', icon: 'clock', page: 'panel/past' },
   { label: 'Whiteboard', icon: 'pen', page: 'whiteboard' },
   { label: 'Coding round', icon: 'code', page: 'coding' },
   { label: 'Documents', icon: 'file', page: 'docs' },

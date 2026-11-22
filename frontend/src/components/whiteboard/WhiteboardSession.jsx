@@ -2,6 +2,7 @@ import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } fro
 import { finishWhiteboard, getWhiteboard, reviewWhiteboard, saveWhiteboardScene } from '../../lib/api'
 import { useInterviewVoice } from '../../lib/useInterviewVoice'
 import ConfirmDialog from '../ConfirmDialog'
+import FocusButton from '../focus/FocusButton'
 import Icon from '../Icon'
 import SpiderLoader from '../SpiderLoader'
 import InterviewerPanel from './InterviewerPanel'
@@ -184,6 +185,7 @@ export default function WhiteboardSession({ id }) {
           <input type="checkbox" checked={autoReview} onChange={(e) => setAutoReview(e.target.checked)} />
           Auto
         </label>
+        <FocusButton />
         <button onClick={() => review()} disabled={Boolean(busy)}>
           <Icon name="eye" size={15} />
           Review now

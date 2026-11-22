@@ -2,6 +2,7 @@
 //   <SpiderArt />        just the drawing (the logo uses this; she stays still, and only blinks).
 //                        mood="okay" | "itchy" | "angry" | "bored" changes her face (your pet spider uses it)
 //                        elder: an old, wise spider (the question bank's judge): white hair, glasses, moustache
+//                        talk: how loud she is talking, 0 to 1 (the panel call): her mouth opens with her voice
 //   <SpiderLoader />     the drawing, bobbing on her thread with wiggling legs, and a label
 // The movement is in CSS (see "SpiderLoader" in base.css), so no images or libraries.
 
@@ -21,8 +22,9 @@ const MOUTHS = {
   bored: 'M46.5 70.5 L53.5 70.5',
 }
 const SMILE = 'M46 69 Q50 73 54 69'
+const TALK_FROM = 0.04 // quieter than this, she smiles; louder, her mouth opens (bigger the louder)
 
-export function SpiderArt({ mood, elder = false }) {
+export function SpiderArt({ mood, elder = false, talk = 0 }) {
   return (
     <svg className="spider-art" viewBox="0 0 100 120" aria-hidden="true">
       <g className="spider-sway">
@@ -82,7 +84,11 @@ export function SpiderArt({ mood, elder = false }) {
 
           <ellipse className="spider-cheek" cx="37" cy="68" rx="3.2" ry="2" />
           <ellipse className="spider-cheek" cx="63" cy="68" rx="3.2" ry="2" />
-          <path className="spider-smile" d={MOUTHS[mood] || SMILE} />
+          {talk > TALK_FROM ? (
+            <ellipse className="spider-mouth" cx="50" cy="70.5" rx={3 + talk * 1.5} ry={0.8 + Math.min(1, talk * 1.8) * 3.2} />
+          ) : (
+            <path className="spider-smile" d={MOUTHS[mood] || SMILE} />
+          )}
         </g>
       </g>
     </svg>

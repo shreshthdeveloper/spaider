@@ -621,6 +621,11 @@ button:focus-visible,
   opacity: 0.85;
 }
 
+/* talking (SpiderArt's talk prop): an open mouth that grows with her voice */
+.spider-mouth {
+  fill: #4a2b2b;
+}
+
 /* mood faces (SpiderArt's mood prop): heavy eyelids in her own colour, and dark angry brows */
 .spider-lids path {
   fill: var(--spider-color, var(--spider));

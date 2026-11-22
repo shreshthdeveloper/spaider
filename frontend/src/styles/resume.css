@@ -1,0 +1,470 @@
+/* The Resume grind page (pages/ResumePage.jsx, components/resume/).
+   Each claim's colour: green = defended, yellow = shaky, red = can't back it up, untested = not asked yet. */
+
+.level-green {
+  --level-fill: var(--good-soft);
+  --level-line: var(--good);
+  --level-ink: var(--good-ink);
+}
+
+.level-yellow {
+  --level-fill: var(--mid-soft);
+  --level-line: var(--warn);
+  --level-ink: var(--warn-ink);
+}
+
+.level-red {
+  --level-fill: var(--bad-soft);
+  --level-line: var(--bad);
+  --level-ink: var(--bad-ink);
+}
+
+.level-untested {
+  --level-fill: var(--panel2);
+  --level-line: var(--line2);
+  --level-ink: var(--muted);
+}
+
+/* the title takes a full row on narrow screens, with the buttons below it */
+.resume-page .head-text {
+  flex: 1 1 320px;
+}
+
+/* ---- first visit: upload ---- */
+.resume-upload {
+  padding: 22px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+}
+
+@media (min-width: 1000px) {
+  .resume-upload {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .resume-upload .resume-steps,
+  .resume-upload .inline-error {
+    grid-column: 1 / -1;
+  }
+}
+
+.resume-upload > .spider-loader {
+  grid-column: 1 / -1;
+  min-height: 260px;
+  justify-content: center;
+}
+
+.resume-paste {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.resume-paste textarea {
+  flex: 1;
+  resize: vertical;
+}
+
+.resume-paste button {
+  align-self: flex-end;
+}
+
+.resume-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+}
+
+.resume-steps li {
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--text2);
+  background: var(--panel-tint);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.resume-step-icon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: 8px;
+}
+
+/* ---- what changed: new version, last grind ---- */
+.resume-news {
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.news-item {
+  padding: 10px 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: 12px;
+}
+
+.news-item > .icon {
+  color: var(--accent);
+}
+
+.news-removed {
+  flex-basis: 100%;
+  padding-left: 23px;
+}
+
+/* ---- the page: resume on the left, grind card and claim on the right ---- */
+.resume-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+@media (min-width: 1100px) {
+  .resume-layout {
+    grid-template-columns: minmax(0, 1.35fr) minmax(340px, 1fr);
+  }
+
+  .resume-side {
+    position: sticky;
+    top: 20px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+  }
+}
+
+.resume-side {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ---- the resume as a heatmap ---- */
+.resume-paper {
+  padding: 26px 28px;
+}
+
+.resume-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.resume-line {
+  margin: 0;
+  padding: 3px 10px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text2);
+}
+
+button.resume-line {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+  font-weight: 400;
+  color: var(--text);
+  background: var(--level-fill);
+  border: 0;
+  border-left: 3px solid var(--level-line);
+  border-radius: 0 8px 8px 0;
+}
+
+button.resume-line:hover:not(:disabled) {
+  background: var(--level-fill);
+  box-shadow: inset 0 0 0 1px var(--level-line);
+}
+
+button.resume-line.picked {
+  box-shadow: inset 0 0 0 2px var(--level-line), var(--focus);
+}
+
+.claim-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.claim-tag {
+  flex: none;
+  margin-top: 2px;
+  padding: 1px 8px;
+  font-size: 11.5px;
+  font-weight: 650;
+  color: var(--level-ink);
+  background: var(--panel);
+  border: 1px solid var(--level-line);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.resume-extra {
+  margin-top: 18px;
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px dashed var(--line2);
+}
+
+/* ---- the grind card ---- */
+.grind-card {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.grind-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.grind-ready {
+  display: flex;
+  flex-direction: column;
+}
+
+.grind-ready b {
+  font-size: 34px;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+.due-chip {
+  color: var(--warn-ink);
+  background: var(--warn-soft);
+  border-color: var(--mid-line);
+}
+
+.grind-bar {
+  height: 10px;
+  display: flex;
+  gap: 2px;
+  overflow: hidden;
+  background: var(--panel2);
+  border-radius: 999px;
+}
+
+.grind-bar span {
+  flex-basis: 0;
+  background: var(--level-line);
+}
+
+.grind-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  color: var(--text2);
+}
+
+.grind-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.grind-legend i {
+  width: 9px;
+  height: 9px;
+  background: var(--level-line);
+  border-radius: 3px;
+}
+
+.grind-continue {
+  justify-content: center;
+}
+
+.grind-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+}
+
+.grind-option {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.grind-start {
+  justify-content: center;
+  padding: 11px 15px;
+  font-size: 15px;
+}
+
+.grind-note {
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ---- one claim ---- */
+.claim-hint {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.claim-detail {
+  padding: 18px;
+  border-top: 3px solid var(--level-line);
+}
+
+.claim-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.level-chip {
+  font-weight: 650;
+  color: var(--level-ink);
+  background: var(--level-fill);
+  border-color: var(--level-line);
+}
+
+.claim-quote {
+  margin: 14px 0 6px;
+  padding: 0 0 0 12px;
+  font-size: 16px;
+  line-height: 1.5;
+  font-weight: 600;
+  border-left: 3px solid var(--level-line);
+}
+
+.claim-before {
+  margin: 0 0 4px;
+  color: var(--muted);
+}
+
+.claim-ghost {
+  margin-top: 12px;
+  padding: 8px 12px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  background: var(--panel2);
+  border: 1px dashed var(--line2);
+  border-radius: 10px;
+}
+
+.claim-ghost.up {
+  background: var(--good-soft);
+  border-color: var(--good);
+}
+
+.claim-ghost.down {
+  background: var(--bad-soft);
+  border-color: var(--bad-line);
+}
+
+.claim-heading {
+  margin: 18px 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.claim-likely {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text2);
+}
+
+.claim-attempt {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--panel-tint);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+.claim-attempt summary {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.attempt-question {
+  flex: 1;
+  min-width: 0;
+}
+
+.attempt-score {
+  flex: none;
+  padding: 1px 7px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+}
+
+.attempt-score.score-good {
+  color: var(--good-ink);
+  background: var(--good-soft);
+}
+
+.attempt-score.score-mid {
+  color: var(--warn-ink);
+  background: var(--mid-soft);
+}
+
+.attempt-score.score-bad {
+  color: var(--bad-ink);
+  background: var(--bad-soft);
+}
+
+.attempt-answer {
+  margin: 10px 0 6px;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.attempt-feedback {
+  margin: 0 0 6px;
+  color: var(--text2);
+}
+
+.attempt-follow {
+  margin-top: 8px;
+  padding-left: 10px;
+  border-left: 2px solid var(--line2);
+}
+
+.attempt-follow p {
+  margin: 4px 0 0;
+}

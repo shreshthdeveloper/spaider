@@ -3,6 +3,7 @@ import { finishCodingRound, getCodingRound, reviewCode, saveCode } from '../../l
 import { runTests, warmUpPython } from '../../lib/python'
 import { useInterviewVoice } from '../../lib/useInterviewVoice'
 import ConfirmDialog from '../ConfirmDialog'
+import FocusButton from '../focus/FocusButton'
 import Icon from '../Icon'
 import SpiderLoader from '../SpiderLoader'
 import InterviewerPanel from '../whiteboard/InterviewerPanel'
@@ -220,6 +221,7 @@ export default function CodingSession({ id }) {
           <input type="checkbox" checked={autoReview} onChange={(e) => setAutoReview(e.target.checked)} />
           Auto
         </label>
+        <FocusButton />
         <button onClick={() => review({ hint: true })} disabled={Boolean(busy)} title={practice ? 'Free in practice mode' : 'Costs 0.5 points'}>
           <Icon name="sparkle" size={15} />
           Hint{session.hints_used > 0 && ` (${session.hints_used})`}

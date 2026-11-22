@@ -12,6 +12,7 @@ class InterviewState(TypedDict):
     num_questions: int          # how many main questions to ask
     difficulty: str             # "easy", "medium", "hard" or "mixed"
     max_follow_ups: int         # follow-ups allowed per main question
+    intro: str                  # Bella's greeting, said before the first question (fixed words, see interview_service)
 
     # Set by plan_questions
     questions: list[dict]       # the plan: [{"question": ..., "key_points": [...]}]
