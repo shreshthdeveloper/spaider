@@ -11,12 +11,12 @@ const NAV_GROUPS = [
   {
     title: 'Practice',
     items: [
-      { id: 'bank', label: 'Question bank', icon: 'layers' },
       { id: 'interview', label: 'Mock interview', icon: 'target' },
-      { id: 'resume', label: 'Resume grind', icon: 'idcard' },
       { id: 'panel', label: 'Panel interview', icon: 'users' },
       { id: 'whiteboard', label: 'Whiteboard', icon: 'pen' },
       { id: 'coding', label: 'Coding round', icon: 'code' },
+      { id: 'resume', label: 'Resume grind', icon: 'idcard' },
+      { id: 'bank', label: 'Question bank', icon: 'layers' },
       { id: 'docs', label: 'Documents', icon: 'file' },
     ],
   },
