@@ -1,4 +1,4 @@
-"""Run a mock interview in the terminal. From backend/:  python -m playground.interview_cli"""
+"""Run a mock interview in the terminal. From backend/:  python -m scripts.interview_cli"""
 import uuid
 
 from dotenv import load_dotenv
@@ -41,7 +41,7 @@ while "__interrupt__" in result:
         if graded["missed"]:
             print("     Missed:", "; ".join(graded["missed"]))
 
-    
+
 
 # 5. No more pauses: the graph reached END, and result is the final state, with the report.
 report = result["report"]

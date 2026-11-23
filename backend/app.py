@@ -7,7 +7,6 @@ from dotenv import load_dotenv
 from flask import Flask
 
 from db import init_db
-
 from routes.chat import chat_bp
 from routes.coding import coding_bp
 from routes.documents import documents_bp

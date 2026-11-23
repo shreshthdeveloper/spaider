@@ -1,6 +1,6 @@
 """See semantic search on an uploaded document. From backend/:
 
-    python -m playground.search_demo <document_id> "your question"
+    python -m scripts.search_demo <document_id> "your question"
 """
 import sys
 

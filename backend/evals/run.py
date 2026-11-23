@@ -17,8 +17,7 @@ from services import eval_service  # noqa: E402
 
 
 def main():
-    """Runs the suites named on the command line (all of them if none), and prints every case and the scores.
-    Runs the suites named on the command line (all of them if none), and prints every case and the scores."""
+    """Runs the suites named on the command line (all of them if none), and prints every case and the scores."""
     names = sys.argv[1:] or list(SUITES)
     for name in names:
         if name not in SUITES:

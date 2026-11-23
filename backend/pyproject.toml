@@ -1,0 +1,15 @@
+# Settings for the backend's tools. Run them from backend/:  ruff check .   and   pytest
+
+[tool.ruff]
+line-length = 150
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]  # style errors, real bugs (unused names, undefined names), warnings, import order
+
+[tool.ruff.lint.per-file-ignores]
+"tests/conftest.py" = ["E402"]  # it sets the test database before importing the app, on purpose
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore:No uuidRepresentation is specified:DeprecationWarning"]  # MongoEngine's default; harmless here

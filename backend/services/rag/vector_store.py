@@ -30,8 +30,7 @@ def delete_chunks(document_id):
 
 
 def search(document_id, query, k=5):
-    """The k chunks of one document closest in meaning to the query, each with a relevance score from 0 to 1.
-    The k chunks of one document closest in meaning to the query, each with a relevance score from 0 to 1."""
+    """The k chunks of one document closest in meaning to the query, each with a relevance score from 0 to 1."""
     return get_vector_store().similarity_search_with_relevance_scores(query, k=k, filter={"document_id": document_id})
 
 

@@ -74,8 +74,7 @@ def list_sessions():
 
 @coding_bp.post("/coding")
 def start_session():
-    """POST /api/coding  {problem_id or "surprise", difficulty, mode}: starts a round, and Bella greets you.
-    POST /api/coding  {problem_id or "surprise", difficulty, mode}: starts a round, and Bella greets you."""
+    """POST /api/coding  {problem_id or "surprise", difficulty, mode}: starts a round, and Bella greets you."""
     data = request.get_json(silent=True) or {}
     mode = data.get("mode", "interview")
     if mode not in MODES:

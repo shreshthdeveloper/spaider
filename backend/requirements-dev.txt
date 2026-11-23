@@ -1,0 +1,4 @@
+# Tools for development and CI only (not installed on the server).
+-r requirements.txt
+pytest==9.2.0
+ruff==0.17.6

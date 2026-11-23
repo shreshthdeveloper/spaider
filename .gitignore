@@ -9,3 +9,9 @@ node_modules/
 dist/
 .DS_Store
 tts_cache/
+.pytest_cache/
+.ruff_cache/
+*.log
+.vscode/
+.idea/
+.claude/settings.local.json

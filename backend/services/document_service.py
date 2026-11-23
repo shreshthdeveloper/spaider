@@ -5,11 +5,10 @@ from pypdf.errors import PdfReadError
 
 from models.document import UploadedDocument
 from services.rag import vector_store
+from services.rag.answer import answer_live, answer_question
 from services.rag.chunks import split_pages
 from services.rag.pdf import read_pdf
-from services.rag.answer import answer_live, answer_question
 from services.rag.vector_map import document_map
-
 
 UPLOAD_DIR = Path(__file__).resolve().parents[1] / "uploads"  # backend/uploads (ignored by git)
 

@@ -1,0 +1,70 @@
+# Checks every push and pull request: backend lint and tests (with a MongoDB service), frontend lint and build.
+# On a push to main, once both checks pass, the deploy job updates the live server.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mongo:
+        image: mongo:7
+        ports: ["27017:27017"]
+        # wait until MongoDB answers before the steps run
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements*.txt
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      - run: pytest -q
+        env:
+          TEST_MONGO_URI: mongodb://localhost:27017
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: npm run lint
+      - run: npm run build
+
+  deploy:
+    # Runs on the GitHub runner installed on the server itself (deploy/setup-runner.sh), so GitHub needs no key
+    # and the server opens no port. update.sh pulls main, updates only the parts that changed, and waits for
+    # /api/health; if it fails, this job fails and shows why.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [backend, frontend]
+    runs-on: [self-hosted, spaider]
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
+    timeout-minutes: 20
+    steps:
+      - run: PATH="/snap/bin:$PATH" bash "$HOME/spaider/deploy/update.sh"

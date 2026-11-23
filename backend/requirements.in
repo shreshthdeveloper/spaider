@@ -1,0 +1,20 @@
+# What the backend uses directly. requirements.txt pins these and everything they need, so every install
+# (laptop, server, CI) gets exactly the same versions. After changing this file, install and re-pin:
+#   pip install -r requirements.in && pip freeze > requirements.txt
+Flask
+gunicorn
+python-dotenv
+mongoengine
+pymongo
+langchain
+langchain-core
+langchain-openai
+langchain-text-splitters
+langchain-chroma
+chromadb
+langgraph
+langgraph-checkpoint-mongodb
+openai
+pypdf
+numpy
+pydantic

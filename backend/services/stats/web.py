@@ -19,8 +19,7 @@ WEAK_INTERVIEW = 3  # an interview that scored below this (out of 5) is worth do
 
 
 def web_tasks(done_today, bank_done_today):
-    """The flies on the web, most important first: today, the next bank, unfinished rounds, then weak spots.
-    The flies on the web, most important first: today, the next bank, unfinished rounds, then weak spots."""
+    """The flies on the web, most important first: today, the next bank, unfinished rounds, then weak spots."""
     latest = {
         "interview": _latest(Interview),
         "coding": _latest(CodingSession),

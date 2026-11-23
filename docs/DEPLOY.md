@@ -176,19 +176,41 @@ Open **https://15-134-148-124.sslip.io** and log in with the site username and p
 
 ## 3. Updating the code
 
-Push from the laptop, then run **one script on the server**. It pulls the code and updates only the parts that
-changed: the backend (packages + restart + health check), the frontend (build + publish) and Caddy's settings.
+**Push to `main` and the server updates itself.** GitHub Actions runs the checks; when both pass, the deploy job
+runs [deploy/update.sh](../deploy/update.sh) on the server, through a GitHub runner installed there. The script
+pulls the code and updates only the parts that changed: the backend (packages + restart + health check), the
+frontend (build + publish) and Caddy's settings. If a check or the health check fails, the site stays as it was
+and the run on GitHub shows why.
 
 ```mermaid
 flowchart TD
-    P[Push to GitHub] --> S["On the server:<br/>update.sh"]
+    P[Push to main] --> CI["GitHub Actions:<br/>backend tests + lint, frontend lint + build"]
+    CI -->|both pass| S["Runner on the server:<br/>update.sh"]
     S --> Q{Which files changed?}
     Q -->|"backend/"| B["Install packages, restart,<br/>wait for /api/health"]
     Q -->|"frontend/"| F["npm run build,<br/>copy into /var/www/spaider"]
     Q -->|"deploy/Caddyfile"| C[Check and reload Caddy]
 ```
 
-**From your laptop, one command** ([deploy/ship.sh](../deploy/ship.sh)): commit, then
+### One-time setup: the runner
+
+The runner only makes outgoing connections to GitHub, so the server opens no port and GitHub stores no key.
+
+```bash
+# laptop: only the repo owner may run workflows from other people's pull requests (they could reach the runner)
+gh api -X PUT repos/<owner>/spaider/actions/permissions/fork-pr-contributor-approval -f approval_policy=all_external_contributors
+gh api -X POST repos/<owner>/spaider/actions/runners/registration-token --jq .token    # valid for one hour
+
+# server
+cd ~/spaider && git pull --ff-only
+bash deploy/setup-runner.sh <token>
+```
+
+It shows as **Idle** under the repo's Settings → Actions → Runners.
+
+### By hand
+
+**From your laptop, one command** ([deploy/ship.sh](../deploy/ship.sh)), when GitHub Actions is unavailable: commit, then
 
 ```bash
 bash deploy/ship.sh          # push to GitHub, then the server runs update.sh
@@ -213,7 +235,6 @@ from GitHub and replaces it.
 page never calls an API route that isn't live yet. Keep old routes working until the new page is out (like `/answer`
 next to `/answer/live`).
 
-**Next: CI/CD.** GitHub Actions will run this same script after every merge, once you click Approve.
 
 ## 4. Later: CloudFront
 

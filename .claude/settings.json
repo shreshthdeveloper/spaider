@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run lint)",
+      "Bash(npm run build)",
+      "Bash(ruff check:*)",
+      "Bash(pytest:*)",
+      "Bash(python -m scripts.project_map)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)"
+    ],
+    "deny": [
+      "Read(**/.env)",
+      "Edit(**/.env)",
+      "Bash(cat **/.env)"
+    ],
+    "ask": [
+      "Bash(python -m evals.run:*)"
+    ]
+  }
+}
