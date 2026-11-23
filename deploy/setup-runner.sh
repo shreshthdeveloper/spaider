@@ -22,7 +22,10 @@ if [ -f "$RUNNER_DIR/.runner" ]; then
 fi
 
 echo "1. Download the newest runner"
-VERSION="$(curl -fsSL https://api.github.com/repos/actions/runner/releases/latest | grep -m1 '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')"
+# Read the whole answer first: piping curl straight into "grep -m1" makes curl fail when grep stops reading early.
+RELEASE="$(curl -fsSL https://api.github.com/repos/actions/runner/releases/latest)"
+VERSION="$(echo "$RELEASE" | grep '"tag_name"' | sed -E 's/.*"v([^"]+)".*/\1/')"
+echo "   version $VERSION"
 mkdir -p "$RUNNER_DIR"
 cd "$RUNNER_DIR"
 curl -fsSL -o runner.tar.gz "https://github.com/actions/runner/releases/download/v${VERSION}/actions-runner-linux-x64-${VERSION}.tar.gz"
